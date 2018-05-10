@@ -98,27 +98,32 @@ class CRP {
     std::cout << "CRPパラメータ" << CRP_alpha << std::endl;
     std::cout << "CRP入店人数" << CRP_customer_number << std::endl;
   }
+
   void show_customer_datas() {
-    std::cout << "vecotorの全要素表示開始" << std::endl;
-    for (const auto &i : customer_seating_arrangement) {
-      std::cout << "customer_seating_arrangement" << i << std::endl;
+    std::cout << "座席配置の全要素表示開始" << std::endl;
+    /*    for (const auto &i : customer_seating_arrangement) {
+          std::cout << "customer_seating_arrangement" << i << std::endl;
+        }
+    */
+
+    /*    for (const auto &i : desk_seating_ratio) {
+          std::cout << "desk_seating_ratio" << i << std::endl;
+        }
+    */
+    for (const auto &i : desk_seating_arrangement) {
+      std::cout << "desk_seating_arrangement" << i << std::endl;
     }
-    for (const auto &j : desk_seating_ratio) {
-      std::cout << "desk_seating_ratio" << j << std::endl;
-    }
-    for (const auto &k : desk_seating_arrangement) {
-      std::cout << "desk_seating_arrangement" << k << std::endl;
-    }
-    std::cout << "vecotorの全要素表示終了" << std::endl;
+
+    std::cout << "total_desk_" << desk_seating_arrangement.size() << std::endl;
+    std::cout << "座席配置の全要素表示終了" << std::endl;
   }
 };
 
 int main() {
   CRP C;
   C.get_CRP_parameter();
-  C.show_CRP_parameter();
-  C.show_customer_datas();
   C.CRP_prrocedure();
+  // C.show_CRP_parameter();
   C.show_customer_datas();
   return 0;
- }
+}
