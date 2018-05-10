@@ -34,21 +34,21 @@ int main() {
   desk_seating_arrangement.front() = 1;
   desk_seating_ratio.front() = 1;
   desk_seating_ratio.back() = CRP_alpha;
-  int new_customer_desk;
+  int new_customer_desk;//新しい客が座る机の番号-1(配列にはそのまま代入可能)
 
-  std::cout << "vecoteの全要素open初期値" << std::endl;
-  for (const auto &i : customer_seating_arrangement)
-    std::cout << "customer_seating_arrangement" << i << std::endl;
-  for (const auto &i : desk_seating_ratio)
-    std::cout << "desk_seating_ratio" << i << std::endl;
-  for (const auto &i : desk_seating_arrangement)
-    std::cout << "desk_seating_arrangement" << i << std::endl;
-  std::cout << "vecoteの全要素終了" << std::endl;
+//  std::cout << "vecoteの全要素open初期値" << std::endl;
+//  for (const auto &i : customer_seating_arrangement)
+//    std::cout << "customer_seating_arrangement" << i << std::endl;
+//  for (const auto &i : desk_seating_ratio)
+//    std::cout << "desk_seating_ratio" << i << std::endl;
+//  for (const auto &i : desk_seating_arrangement)
+//    std::cout << "desk_seating_arrangement" << i << std::endl;
+//  std::cout << "vecoteの全要素終了" << std::endl;
 
 
   //次の確率に従って多項分布から座る机を決定
-  //  for (auto i = customer_seating_arrangement.begin();
-  //       i < customer_seating_arrangement.end(); i++) {
+    for (auto j= 1;
+         j < CRP_customer_number; j++) {
   //次の客が座る位置の決定
 
   std::random_device seed_gen;  //呼び出すたびに変える必要あり?
@@ -57,16 +57,47 @@ int main() {
   std::discrete_distribution<std::size_t> disc_dis(desk_seating_ratio.begin(),
                                                    desk_seating_ratio.end());
 
-  new_customer_desk = disc_dis(engine)+1;
-  std::cout << "new_customer_deskは" << new_customer_desk+1 << std::endl;
+  new_customer_desk = disc_dis(engine);
+  std::cout << "new_customer_deskは" << new_customer_desk<<"番目"<< std::endl;
 
   //それに伴う諸々の変更
-  customer_seating_arrangement.push_back(disc_dis(engine)+1);
+  customer_seating_arrangement.push_back(new_customer_desk+1);//机のindexは1スタートなので代入値は+1
+
+  if(new_customer_desk==desk_seating_arrangement.size()){
+  //新しい机
+  desk_seating_ratio.back()=1;
+  desk_seating_ratio.push_back(CRP_alpha);
+ desk_seating_arrangement.push_back(1);
+ std::cout << "新しい机誕生"<< std::endl;
+
+  }else{
+  //既存の机
+
+  //for (const auto &i : desk_seating_ratio)
+   // std::cout << "既存desk_seating_ratio更新前" << i << std::endl;
+  //for (const auto &i : desk_seating_ratio)
+  //  std::cout << "既存desk_seating_arrangement更新前" << i << std::endl;
+
+desk_seating_ratio[new_customer_desk]+=1;
+desk_seating_arrangement[new_customer_desk]+=1;
+
+//desk_seating_ratio[0]+=1;
+//desk_seating_arrangement[0]+=1;
+
+   std::cout << "既存の机選択"<< std::endl;
+
+  // for (const auto &i : desk_seating_ratio)
+  //  std::cout << "既存desk_seating_ratio更新後" << i << std::endl;
+  //for (const auto &i : desk_seating_arrangement)
+   // std::cout << "既存desk_seating_arrangement更新後" << i << std::endl;
+ 
+  }
+
 
   //配置を変更
 
   //総和があっているか確認
-  //  }
+    }
 
   std::cout << "CRPパラメータ" << CRP_alpha << std::endl;
 
