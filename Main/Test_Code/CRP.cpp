@@ -1,24 +1,25 @@
 // CRP.cpp
 // CRPの過程に従って自動的に客を分割
-#include <chrono>
+// 入力:CRPのパラメータalpha,CRPの試行回数(客の人数)
+// 出力:各客の座り方, 各机の客の人数
 #include <iostream>
 #include <random>
 #include <vector>
 
-void OpenVectors(int &a);
-
 int main() {
-  int CRP_customer_number;
-  double CRP_alpha;
+  int CRP_customer_number;  // CRPの試行回数(客の人数)
+  double CRP_alpha;         // CRPのパラメータalpha
 
-  int Occupied_desk_number = 1;  //一人でも座っている人がいる机の数
-
-  std::cout << "CRPのパラメータを入力" << std::endl;
+  std::cout << "CRPパラメータ a=";
   std::cin >> CRP_alpha;
 
-  std::cout << "CRPの客の人数を入力" << std::endl;
+  std::cout << "CRPの客の人数=";
   std::cin >> CRP_customer_number;
 
+  std::random_device seed_gen;  //乱数部分はあとでもっとglobalに纏められそう
+  std::mt19937 engine(seed_gen());
+
+  int Occupied_desk_number = 1;  //一人でも座っている人がいる机の数
   std::vector<int> customer_seating_arrangement(
       1, 0);  //各客がどの机に座るか(配列長は1から,
               //机のindexは1からスタート)(0で末入店)
@@ -39,9 +40,6 @@ int main() {
   //次の確率に従って多項分布から座る机を決定
   for (auto j = 1; j < CRP_customer_number; j++) {
     // 2CRP試行を2人目から繰り返す
-
-    std::random_device seed_gen;  //呼び出すたびに変える必要あり?
-    std::mt19937 engine(seed_gen());  //ここに入れると重そう
 
     std::discrete_distribution<std::size_t> disc_dis(desk_seating_ratio.begin(),
                                                      desk_seating_ratio.end());
@@ -86,51 +84,48 @@ int main() {
     //配置を変更
 
     //各CRPの総和があっているか確認例外部分
-	
-	if (std::accumulate(desk_seating_arrangement.begin(),
-                      desk_seating_arrangement.end(),
-                      0) == customer_seating_arrangement.size()) {
 
-	 std::cout <<j <<"Each Sum of desk_seating_arrangement is OK" << std::endl;
-
-	}
-	else{
-    std::cout << "Sum customer is " << customer_seating_arrangement.size()<< std::endl;
-  std::cout << "Sum desk is " <<std::accumulate(desk_seating_arrangement.begin(),
-                      desk_seating_arrangement.end(),
-                      0)<< std::endl;
-
+    if (std::accumulate(desk_seating_arrangement.begin(),
+                        desk_seating_arrangement.end(),
+                        0) != customer_seating_arrangement.size()) {
+      std::cout << "Sum customer is " << customer_seating_arrangement.size()
+                << std::endl;
+      std::cout << "Sum desk is "
+                << std::accumulate(desk_seating_arrangement.begin(),
+                                   desk_seating_arrangement.end(), 0)
+                << std::endl;
+    }
+    // else { std::cout <<j <<"Each Sum of desk_seating_arrangement is OK" <<//
+    // std::endl; }
   }
-
-
-
-  }
-
-  std::cout << "CRPパラメータ" << CRP_alpha << std::endl;
-
-  std::cout << "CRP入店人数" << CRP_customer_number << std::endl;
-
-  std::cout << "vecoteの全要素open最終値" << std::endl;
-  for (const auto &i : customer_seating_arrangement)
-    std::cout << "customer_seating_arrangement" << i << std::endl;
-  for (const auto &i : desk_seating_ratio)
-    std::cout << "desk_seating_ratio" << i << std::endl;
-  for (const auto &i : desk_seating_arrangement)
-    std::cout << "desk_seating_arrangement" << i << std::endl;
-  std::cout << "vecoteの全要素終了" << std::endl;
 
   //例外処理部かvector判定する部分
+  // CRP_customer_numberrと各机のcustomerの総和が等しいか確認
+
   if (std::accumulate(desk_seating_arrangement.begin(),
                       desk_seating_arrangement.end(),
                       0) == CRP_customer_number) {
     std::cout << "Sum of desk_seating_arrangement is OK" << std::endl;
   }
-  if (std::accumulate(desk_seating_ratio.begin(),
-                      desk_seating_ratio.end(),
-                      0)-CRP_alpha == CRP_customer_number) {
+  if (std::accumulate(desk_seating_ratio.begin(), desk_seating_ratio.end(), 0) -
+          CRP_alpha ==
+      CRP_customer_number) {
     std::cout << "Sum of desk_seating_ratio is OK" << std::endl;
   }
 
-  // customerと各机のcustomerの総和をとって確認
+  //全てを出力
+  // std::cout << "CRPパラメータ" << CRP_alpha << std::endl;
+  // std::cout << "CRP入店人数" << CRP_customer_number << std::endl;
+
+  // std::cout << "vecoteの全要素open最終値" << std::endl;
+  //  for (const auto &i : customer_seating_arrangement)
+  //    std::cout << "customer_seating_arrangement" << i << std::endl;
+  // for (const auto &i : desk_seating_ratio)
+  //  std::cout << "desk_seating_ratio" << i << std::endl;
+  // for (const auto &i : desk_seating_arrangement)
+  //  std::cout << "desk_seating_arrangement" << i << std::endl;
+  // std::cout << "vecoteの全要素終了" << std::endl;
+  std::cout << "Last_total_desk_nuber=" << desk_seating_arrangement.size()
+            << std::endl;
   return 0;
 }
