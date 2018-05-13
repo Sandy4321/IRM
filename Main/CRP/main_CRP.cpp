@@ -21,7 +21,7 @@ int main(int argc, const char *argv[]) {
   // C.show_customer_datas();
 
   double average_desk = 0;
-  int Repeat_number = 100;//暫定で決定
+  int Repeat_number = 1000;//暫定で決定
   for (auto j = 0; j < Repeat_number; j++) {
     CRP C;
     C.set_CRP_parameter(customer_number);
