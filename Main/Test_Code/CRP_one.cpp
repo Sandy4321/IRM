@@ -5,6 +5,8 @@
 #include <iostream>
 #include <random>
 #include <vector>
+#include <stdio.h>
+#include <stdlib.h>
 
 class CRP {
  private:
@@ -29,6 +31,28 @@ class CRP {
     customer_seating_arrangement.resize(1, 0);
     desk_seating_arrangement.resize(Occupied_desk_number, 0);
     desk_seating_ratio.resize(Occupied_desk_number + 1, 0);
+  }
+
+  double CRP_repeat() {  // CRPを繰り返す関数
+    double average_desk = 0;
+    int Repeat_number = 100;
+    for (auto j = 1; j < Repeat_number; j++) {
+      CRP::CRP_prrocedure();
+      CRP::show_customer_datas();
+      average_desk += (double)desk_seating_arrangement.size();
+    }
+    average_desk /= 100;
+    return average_desk;
+  }
+  int get_desk_number() {
+    int a;
+    a = desk_seating_arrangement.size();
+    return a;
+  }
+
+  void set_CRP_parameter(int n) {  //コマンドライン入力
+    CRP_alpha = 1; //何となく\alphaに固定
+    CRP_customer_number = n;
   }
 
   void get_CRP_parameter() {
@@ -119,9 +143,18 @@ class CRP {
   }
 };
 
-int main() {
+int main(int argc, const char *argv[]) {
   CRP C;
-  C.get_CRP_parameter();
+   //コマンドライン形式の入力
+   
+  if (argc != 2) {
+      std::cout << "This program need  Number of trial" << std::endl;
+      return 0;
+    }
+    int input_customer_number = atoi(argv[1]);
+    C.set_CRP_parameter(input_customer_number);
+  
+//  C.get_CRP_parameter();
   C.CRP_prrocedure();
   // C.show_CRP_parameter();
   C.show_customer_datas();
