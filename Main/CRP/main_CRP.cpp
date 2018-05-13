@@ -7,7 +7,7 @@
 #include <vector>
 #include "CRP.hpp"
 
-int main() {
+int main(int argc,const char *argv[]) {
   CRP C;
   C.get_CRP_parameter();
   C.CRP_prrocedure();
