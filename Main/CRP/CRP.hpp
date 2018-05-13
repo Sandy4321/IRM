@@ -4,10 +4,11 @@
 // CRPの過程に従って自動的に客を分割
 // 入力:CRPのパラメータalpha,CRPの試行回数(客の人数)
 // 出力:各客の座り方, 各机の客の人数
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include <random>
 #include <vector>
-
 class CRP {
  private:
   double CRP_alpha;         // CRPのパラメータalpha
@@ -24,7 +25,10 @@ class CRP {
 
  public:
   CRP();
+  double CRP_repeat();
+  int get_desk_number();
 
+  void set_CRP_parameter(int n);
   void get_CRP_parameter();
   void CRP_prrocedure();  // CRPの本体
   void CRP_first_customer();

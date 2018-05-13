@@ -16,8 +16,29 @@ CRP::CRP() {
   desk_seating_arrangement.resize(Occupied_desk_number, 0);
   desk_seating_ratio.resize(Occupied_desk_number + 1, 0);
 }
+double CRP::CRP_repeat() {  // CRPを繰り返す関数
+  double average_desk = 0;
+  int Repeat_number = 100;
+  for (auto j = 1; j < Repeat_number; j++) {
+    CRP::CRP_prrocedure();
+    CRP::show_customer_datas();
+    average_desk += (double)desk_seating_arrangement.size();
+  }
+  average_desk /= 100;
+  return average_desk;
+}
+int CRP::get_desk_number() {
+  int a;
+  a = desk_seating_arrangement.size();
+  return a;
+}
 
-void CRP::get_CRP_parameter() {
+void CRP::set_CRP_parameter(int n) {  //コマンドライン入力
+  CRP_alpha = 1;
+  CRP_customer_number = n;
+}
+
+void CRP::get_CRP_parameter() {  //手入力
   std::cout << "CRPパラメータ a=";
   std::cin >> CRP_alpha;
   std::cout << "CRPの客の人数=";
@@ -34,8 +55,8 @@ void CRP::CRP_prrocedure() {  // CRPの本体
         desk_seating_ratio.begin(), desk_seating_ratio.end());
     tmp_new_customer_desk = disc_dis(engine);
 
-	CRP::CRP_update_seating_arrangement();
-	CRP::each_CRP_check();
+    CRP::CRP_update_seating_arrangement();
+    CRP::each_CRP_check();
   }
 }
 
