@@ -1,0 +1,62 @@
+#ifndef Generate_IRM_H_
+#define Generate_IRM_H_
+// Generate_IRM.hpp
+// Generate_IRMの過程に従って自動的に客を分割
+// 入力:Generate_IRMのパラメータalpha,Generate_IRMの試行回数(客の人数)
+// 出力:各客の座り方, 各机の客の人数
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <random>
+#include <vector>
+#include "boost/multi_array.hpp"
+
+
+//typedef  boost::multi_array<int, 2> int_2dim_array_type;
+
+
+
+class Generate_IRM {
+ private:
+  double Generate_IRM_co_alpha;  // Generate_IRMのパラメータalpha(二つで共通)
+  int number_of_K;  //比較対象Kの総数,パターン認識本の例の顧客数
+  int number_of_L;  //比較対象Lの総数,パターン認識本の例の商品数
+  int number_of_cluster_K;  //比較対象Kの総クラスタ数
+  int number_of_cluster_L;  //比較対象Lの総クラスタ数
+
+  std::vector<int> hidden_K;  //比較対象Kの潜在系列(Kの要素の各所属クラスタ情報)
+  std::vector<int> hidden_L;  //比較対象Lの潜在系列(Lの要素の各所属クラスタ情報)
+  std::vector<int>
+  Output_Binary_Relation_k;  // 比較対象Kのk番目の要素とLの関係を表すL長vector
+
+  std::vector<std::vector<int> >
+      Output_Binary_Relation_Matrix;  // KとLの関係を表すK*Lの二次元の二値行列.IRMの学習データ
+
+ std::vector<double>
+		  Parameter_Relation_k;  
+  std::vector<std::vector<double> >
+		  Parameter_Relation_Matrix;  // KとLの各クラスタの関係を表すnumber_of_cluster_K*number_of_cluster_Lのパラメータ行列
+
+ public:
+  Generate_IRM();
+
+  void get_customer_seating_arrangement(
+      std::vector<int> &Return_vector);  // IRM用
+
+  //  double Generate_IRM_repeat();    //遺伝研用
+  //  int get_desk_number();  //遺伝研用
+
+  void set_both_alpha_Generate_IRM_customer_number(
+      double a, int n);  //他のクラス(IRMなど)で使うパラメータ設定
+  //  void set_Generate_IRM_customer_number_alpha_1(int n);
+  //  //簡単なパラメータ設定 void get_Generate_IRM_parameter();
+  void run_Generate_IRM();  // Generate_IRMの本体
+                            // void Generate_IRM_first_customer();
+                            //  void Generate_IRM_update_seating_arrangement();
+                            //  void each_Generate_IRM_check();
+
+  //  void show_Generate_IRM_parameter();
+  void show_customer_datas();
+};
+
+#endif
