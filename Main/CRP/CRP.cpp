@@ -16,24 +16,40 @@ CRP::CRP() {
   desk_seating_arrangement.resize(Occupied_desk_number, 0);
   desk_seating_ratio.resize(Occupied_desk_number + 1, 0);
 }
-double CRP::CRP_repeat() {  // CRPを繰り返す関数
+
+void CRP::get_customer_seating_arrangement(
+    std::vector<int> &Return_vector) {  // IRMへの応用用,参照返し
+  Return_vector = customer_seating_arrangement;
+}
+
+double CRP::CRP_repeat() {  // CRPを繰り返す関数，遺伝研用
   double average_desk = 0;
   int Repeat_number = 100;
   for (auto j = 1; j < Repeat_number; j++) {
-    CRP::CRP_prrocedure();
+    CRP::run_CRP();
     CRP::show_customer_datas();
     average_desk += (double)desk_seating_arrangement.size();
   }
   average_desk /= 100;
   return average_desk;
 }
-int CRP::get_desk_number() {
+
+int CRP::get_desk_number() {//遺伝研用
   int a;
   a = desk_seating_arrangement.size();
   return a;
 }
 
-void CRP::set_CRP_parameter(int n) {  //コマンドライン入力
+
+ void CRP::set_both_alpha_CRP_customer_number(
+      double a, int n)  //他のクラス(IRMなど)で使うパラメータ設定
+{
+  CRP_alpha = a;
+  CRP_customer_number = n;
+}
+
+
+void CRP::set_CRP_customer_number_alpha_1(int n) {  //簡単なパラメータ設定(遺伝研用)
   CRP_alpha = 1;
   CRP_customer_number = n;
 }
@@ -45,7 +61,7 @@ void CRP::get_CRP_parameter() {  //手入力
   std::cin >> CRP_customer_number;
 }
 
-void CRP::CRP_prrocedure() {  // CRPの本体
+void CRP::run_CRP() {  // CRPの本体
   CRP::CRP_first_customer();
   std::random_device seed_gen;  //乱数部分はあとでもっとglobalに纏められそう
   std::mt19937 engine(seed_gen());
