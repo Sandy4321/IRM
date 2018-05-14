@@ -5,7 +5,7 @@
 #include <iostream>
 #include <random>
 #include <vector>
-#include <stdio.h>
+//#include <stdio.h>
 #include <stdlib.h>
 
 class CRP {
@@ -37,7 +37,7 @@ class CRP {
     double average_desk = 0;
     int Repeat_number = 100;
     for (auto j = 1; j < Repeat_number; j++) {
-      CRP::CRP_prrocedure();
+      CRP::run_CRP();
       CRP::show_customer_datas();
       average_desk += (double)desk_seating_arrangement.size();
     }
@@ -62,7 +62,7 @@ class CRP {
     std::cin >> CRP_customer_number;
   }
 
-  void CRP_prrocedure() {  // CRPの本体
+  void run_CRP() {  // CRPの本体
     CRP_first_customer();
     std::random_device seed_gen;  //乱数部分はあとでもっとglobalに纏められそう
     std::mt19937 engine(seed_gen());
@@ -151,11 +151,11 @@ int main(int argc, const char *argv[]) {
       std::cout << "This program need  Number of trial" << std::endl;
       return 0;
     }
-    int input_customer_number = atoi(argv[1]);
+    int input_customer_number = std::atoi(argv[1]);
     C.set_CRP_parameter(input_customer_number);
   
 //  C.get_CRP_parameter();
-  C.CRP_prrocedure();
+  C.run_CRP();
   // C.show_CRP_parameter();
   C.show_customer_datas();
   return 0;
