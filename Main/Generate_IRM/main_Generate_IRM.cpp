@@ -1,4 +1,4 @@
-// Generate_IRM.cpp
+// main_Generate_IRM.cpp
 // IRMの生成過程に従って自動的にデータを分割
 // 入力:IRMのパラメータalpha(最初は共通),比較対象Kの総数(パターン認識本の顧客人数),比較対象Lの総数(パターン認識本の商品の総数)
 // 出力:
@@ -19,15 +19,14 @@ int main(int argc, const char *argv[]) {
   double parameter_co_alpha = std::atoi(
       argv[1]);  //二つのCRPに共通のパラメータalpha(共通でなくてもよし)
   double parameter_Beta_a = std::atoi(
-      argv[2]);  //二つのCRPに共通のパラメータalpha(共通でなくてもよし)
+      argv[2]);
   double parameter_Beta_b = std::atoi(
-      argv[3]);  //二つのCRPに共通のパラメータalpha(共通でなくてもよし)
+      argv[3]);
   int K_number = std::atoi(argv[4]);  //比較対象Kの総数
   int L_number = std::atoi(argv[5]);  // 比較対象Lの総数
-                                      // C.get_CRP_parameter();//手動入力
 
   std::vector<int> tmp_K;  //クラス間の(CRP→IRM)のvecのやり取りのため.気持ち悪い
-  std::vector<int> tmp_L;  //クラス間の(CRP→IRM)のvecのやり取りのため.気持ち悪い
+  std::vector<int> tmp_L;
 
   Generate_IRM IRM;
 
