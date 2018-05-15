@@ -51,6 +51,7 @@ class Generate_IRM {
   void Set_Parameter_Relation_Matrix_Beta();
   void decide_Output_Binary_Relation_Matrix();
   void run_Generate_IRM();  // Generate_IRMの本体
+  void Output_by_record_csv();
 
   void show_IRM_parameter();
   void show_datas();

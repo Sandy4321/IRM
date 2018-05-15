@@ -163,6 +163,76 @@ void Generate_IRM::run_Generate_IRM() {  // Generate_IRMの本体
   // Generate_IRM::Generate_IRM_first_customer();
 }
 
+void Generate_IRM::Output_by_record_csv() {
+  FILE *fp;
+  if ((fp = fopen("Output_Binary_Relation_Matrix.csv", "w")) != NULL) {
+    for (int i = 0; i < Output_Binary_Relation_Matrix.size(); i++) {
+      for (int j = 0; j < Output_Binary_Relation_Matrix[i].size(); j++) {
+        //カンマで区切ることでCSVファイルとする
+        fprintf(fp, "%d", Output_Binary_Relation_Matrix[i][j]);
+        if (j != Output_Binary_Relation_Matrix[i].size() - 1) {
+          fprintf(fp, ",");
+        }
+      }
+      fprintf(fp, "\n");
+    }
+    fclose(fp);
+  } else {
+    std::cout << "File cannot Open" << std::endl;
+  }
+  FILE *fa;
+  if ((fa = fopen("Parameter_Relation_Matrix.csv", "w")) != NULL) {
+    for (int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
+      for (int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
+        fprintf(fa, "%lf", Parameter_Relation_Matrix[i][j]);
+        if (j != Parameter_Relation_Matrix[i].size() - 1) {
+          fprintf(fa, ",");
+        }
+      }
+      fprintf(fa, "\n");
+    }
+    fclose(fa);
+  } else {
+    std::cout << "File cannot Open" << std::endl;
+  }
+  FILE *fc;
+  if ((fc = fopen("hidden_K.csv", "w")) != NULL) {
+    for (int i = 0; i < hidden_K.size(); i++) {
+      fprintf(fc, "%d\n", hidden_K[i]);
+    }
+
+    fclose(fa);
+  } else {
+    std::cout << "File cannot Open" << std::endl;
+  }
+  FILE *fd;
+  if ((fd = fopen("hidden_L.csv", "w")) != NULL) {
+    for (int i = 0; i < hidden_L.size(); i++) {
+      fprintf(fd, "%d\n", hidden_L[i]);
+    }
+
+    fclose(fd);
+  } else {
+    std::cout << "File cannot Open" << std::endl;
+  }
+  FILE *fe;
+  if ((fe = fopen("number_of_k_l_in_each_cluster.csv", "w")) != NULL) {
+    for (int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
+      fprintf(fe, "number_of_k_in_each_cluster=%d\n",
+              number_of_k_in_each_cluster[i]);
+    }
+    fprintf(fe, "number_of_cluster_K=%d\n", number_of_cluster_K);
+    for (int i = 0; i < number_of_l_in_each_cluster.size(); i++) {
+      fprintf(fe, "number_of_l_in_each_cluster=%d\n",
+              number_of_l_in_each_cluster[i]);
+    }
+    fprintf(fe, "number_of_cluster_L==%d\n", number_of_cluster_L);
+
+    fclose(fd);
+  } else {
+    std::cout << "File cannot Open" << std::endl;
+  }
+}
 void Generate_IRM::show_IRM_parameter() {
   std::cout << "Generate_IRM_co_alpha" << Generate_IRM_co_alpha << std::endl;
   std::cout << "Generate_IRM_Beta_a" << Generate_IRM_Beta_a << std::endl;
