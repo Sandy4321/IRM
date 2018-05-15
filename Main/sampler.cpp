@@ -2,9 +2,9 @@
 //確率密度関数類のまとめ,IRM::sampler::で呼び出し
 #include <chrono>  //C++11依存,時間計測(これを基に乱数発生)
 #include "sampler.h"
+#include<iostream>
 
-namespace IRM {
-namespace sampler {
+class MYsampler {
 
 int seed =
     std::chrono::system_clock::now().time_since_epoch().count();  //現在時刻
@@ -38,6 +38,6 @@ double normal(double mean, double stddev) {  //正規分布
   std::normal_distribution<double> Normal(mean, stddev);
   return Normal(mt);
 }
-}  // namespace sampler
-}  // namespace IRM
+};  // class sampler
+
 
