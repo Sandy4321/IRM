@@ -11,14 +11,14 @@
 #include <vector>
 #include "boost/multi_array.hpp"
 
-
-//typedef  boost::multi_array<int, 2> int_2dim_array_type;
-
-
+// typedef  boost::multi_array<int, 2> int_2dim_array_type;
 
 class Generate_IRM {
  private:
   double Generate_IRM_co_alpha;  // Generate_IRMのパラメータalpha(二つで共通)
+  double Generate_IRM_Beta_a;  // Generate_IRMのパラメータa(Beta分布で使用)
+  double Generate_IRM_Beta_b;  // Generate_IRMのパラメータb(Beta分布で使用)
+
   int number_of_K;  //比較対象Kの総数,パターン認識本の例の顧客数
   int number_of_L;  //比較対象Lの総数,パターン認識本の例の商品数
   int number_of_cluster_K;  //比較対象Kの総クラスタ数
@@ -26,37 +26,33 @@ class Generate_IRM {
 
   std::vector<int> hidden_K;  //比較対象Kの潜在系列(Kの要素の各所属クラスタ情報)
   std::vector<int> hidden_L;  //比較対象Lの潜在系列(Lの要素の各所属クラスタ情報)
+  std::vector<int> number_of_k_in_each_cluster;  //比較対象Kの各クラスタの要素数
+  std::vector<int> number_of_l_in_each_cluster;  //比較対象Lの各クラスタの要素数
+
   std::vector<int>
-  Output_Binary_Relation_k;  // 比較対象Kのk番目の要素とLの関係を表すL長vector
+      Output_Binary_Relation_k;  // 比較対象Kのk番目の要素とLの関係を表すL長vector
 
   std::vector<std::vector<int> >
       Output_Binary_Relation_Matrix;  // KとLの関係を表すK*Lの二次元の二値行列.IRMの学習データ
 
- std::vector<double>
-		  Parameter_Relation_k;  
+  std::vector<double> Parameter_Relation_k;
   std::vector<std::vector<double> >
-		  Parameter_Relation_Matrix;  // KとLの各クラスタの関係を表すnumber_of_cluster_K*number_of_cluster_Lのパラメータ行列
+      Parameter_Relation_Matrix;  // KとLの各クラスタの関係を表すnumber_of_cluster_K*number_of_cluster_Lのパラメータ行列
 
  public:
   Generate_IRM();
 
-  void get_customer_seating_arrangement(
-      std::vector<int> &Return_vector);  // IRM用
+  void set_number_of_K_L(int a, int b);
+  void set_IRM_hyper_parameter(double alpha, double a, double b);
 
-  //  double Generate_IRM_repeat();    //遺伝研用
-  //  int get_desk_number();  //遺伝研用
+  void set_hidden_K_L(std::vector<int> &K_vector, std::vector<int> &L_vector);
 
-  void set_both_alpha_Generate_IRM_customer_number(
-      double a, int n);  //他のクラス(IRMなど)で使うパラメータ設定
-  //  void set_Generate_IRM_customer_number_alpha_1(int n);
-  //  //簡単なパラメータ設定 void get_Generate_IRM_parameter();
+  void get_each_cluster_number();
+  void Set_Parameter_Relation_Matrix_Beta();
+  void decide_Output_Binary_Relation_Matrix();
   void run_Generate_IRM();  // Generate_IRMの本体
-                            // void Generate_IRM_first_customer();
-                            //  void Generate_IRM_update_seating_arrangement();
-                            //  void each_Generate_IRM_check();
 
-  //  void show_Generate_IRM_parameter();
-  void show_customer_datas();
+  void show_IRM_parameter();
+  void show_datas();
 };
-
 #endif

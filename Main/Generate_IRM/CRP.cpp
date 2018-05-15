@@ -19,6 +19,7 @@ CRP::CRP() {
 
 void CRP::get_customer_seating_arrangement(
     std::vector<int> &Return_vector) {  // IRMへの応用用,参照返し
+  Return_vector.resize(customer_seating_arrangement.size(), 0);
   Return_vector = customer_seating_arrangement;
 }
 
@@ -34,22 +35,21 @@ double CRP::CRP_repeat() {  // CRPを繰り返す関数，遺伝研用
   return average_desk;
 }
 
-int CRP::get_desk_number() {//遺伝研用
+int CRP::get_desk_number() {  //遺伝研用
   int a;
   a = desk_seating_arrangement.size();
   return a;
 }
 
-
- void CRP::set_both_alpha_CRP_customer_number(
-      double a, int n)  //他のクラス(IRMなど)で使うパラメータ設定
+void CRP::set_both_alpha_CRP_customer_number(
+    double a, int n)  //他のクラス(IRMなど)で使うパラメータ設定
 {
   CRP_alpha = a;
   CRP_customer_number = n;
 }
 
-
-void CRP::set_CRP_customer_number_alpha_1(int n) {  //簡単なパラメータ設定(遺伝研用)
+void CRP::set_CRP_customer_number_alpha_1(
+    int n) {  //簡単なパラメータ設定(遺伝研用)
   CRP_alpha = 1;
   CRP_customer_number = n;
 }
