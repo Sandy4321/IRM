@@ -54,8 +54,10 @@ int main(int argc, const char *argv[]) {
   // K_CRP.show_customer_datas();
   // L_CRP.show_customer_datas();
 
- // std::cout << "Generated" << std::endl;
+  // std::cout << "Generated" << std::endl;
   IRM.show_IRM_parameter();
   IRM.show_datas();
+  IRM.Output_by_record_csv();
+
   return 0;
 }
