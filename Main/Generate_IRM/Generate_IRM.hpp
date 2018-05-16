@@ -6,8 +6,10 @@
 // 出力:各客の座り方, 各机の客の人数
 #include <stdio.h>
 #include <stdlib.h>
+#include <fstream>
 #include <iostream>
 #include <random>
+
 #include <vector>
 #include "boost/multi_array.hpp"
 
@@ -41,7 +43,6 @@ class Generate_IRM {
 
  public:
   Generate_IRM();
-
   void set_number_of_K_L(int a, int b);
   void set_IRM_hyper_parameter(double alpha, double a, double b);
 
