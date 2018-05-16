@@ -221,28 +221,55 @@ void IRM_Co_Clustering::update_hidden_K() {
         std::cout << "アップデート前のtmp_hidden_K:" << i << std::endl;
       }
 
-        for (auto &i : tmp_hidden_K) {
-          if (i > tmp_delete_atom_k) {
-            i -= 1;
-          }
+      for (auto &i : tmp_hidden_K) {
+        if (i > tmp_delete_atom_k) {
+          i -= 1;
         }
-      
-      for (const auto &i : tmp_hidden_K) {
-        std::cout << "アップデート後のtmp_hidden_K:" << i << std::endl;
       }
 
-      /*
-            for (const auto &i : tmp_hidden_K) {
-               std::cout << "tmp_hidden_Kクラスタアップデート" << i <<
-               "の机で要素は"<< k << std::endl;
-            }
-                */
+      std::cout << "そして" << std::endl;
+
+      for (const auto &i : tmp_hidden_K) {
+        std::cout << "アップデート後の時の各tmp_hidden_K:" << i << std::endl;
+      }
     }
 
     tmp_hidden_K_get_each_cluster_number();  //改めてクラスター数を設定
+    for (const auto &i : tmp_number_of_k_in_each_cluster) {
+      std::cout << k << "番目の処理の各number_of_k_in_each_cluster:" << i
+                << std::endl;
+    }
+    std::cout << std::endl;
 
-    // k番目の要素の最適なクラスターを選択して決定
-    //     tmp_delete_atom_k=;
+    //各クラスタを選ぶ確率を計算
+    std::random_device seed_gen;  //乱数部分はあとでもっとglobalに纏められそう
+    std::mt19937 engine(seed_gen());  //この二行はあとでfor分の外にだす
+
+    std::vector<double> probability_ratio;
+    for (int i = 0; i < tmp_number_of_k_in_each_cluster.size();
+         i++) {  //既存のクラスタを選択する確率
+      probability_ratio.push_back(1);
+    }
+    probability_ratio.push_back(
+        IRM_Co_Clustering_co_alpha);  //新しいクラスタを選択する確率
+
+    for (const auto &i : probability_ratio) {
+      std::cout << "各確率は:" << i << std::endl;
+    }
+        // k番目の要素の最適なクラスターを選択
+        // 新しい客の机を選択
+        std::discrete_distribution<std::size_t>
+            cluster_dis(probability_ratio.begin(), probability_ratio.end());
+
+    double chosed_new_atom = 0;
+    chosed_new_atom = cluster_dis(engine);
+    std::cout << "クラスタ選択chosed_new_atom=" << chosed_new_atom << std::endl;
+    if (chosed_new_atom == tmp_number_of_k_in_each_cluster.size()) {
+      std::cout << "新しいクラスタが選ばれた"
+                << std::endl;  //新しいクラスタが選ばれたら,,特に処理はなし??
+    }
+
+    //       tmp_delete_atom_k = chosed_new_atom;
 
     // tmp_hidden_Kにtmp_delete_atom_を戻す
     tmp_hidden_K.insert(tmp_hidden_K.begin() + k,
