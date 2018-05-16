@@ -241,7 +241,7 @@ void IRM_Co_Clustering::update_hidden_K() {
     }
     std::cout << std::endl;
 
-    //各クラスタを選ぶ確率を計算
+    //各クラスタを選ぶ確率を計算.この実装がかなり難しい
     std::random_device seed_gen;  //乱数部分はあとでもっとglobalに纏められそう
     std::mt19937 engine(seed_gen());  //この二行はあとでfor分の外にだす
 
@@ -256,10 +256,10 @@ void IRM_Co_Clustering::update_hidden_K() {
     for (const auto &i : probability_ratio) {
       std::cout << "各確率は:" << i << std::endl;
     }
-        // k番目の要素の最適なクラスターを選択
-        // 新しい客の机を選択
-        std::discrete_distribution<std::size_t>
-            cluster_dis(probability_ratio.begin(), probability_ratio.end());
+    // k番目の要素の最適なクラスターを選択
+    // 新しい客の机を選択
+    std::discrete_distribution<std::size_t> cluster_dis(
+        probability_ratio.begin(), probability_ratio.end());
 
     double chosed_new_atom = 0;
     chosed_new_atom = cluster_dis(engine);
@@ -269,7 +269,7 @@ void IRM_Co_Clustering::update_hidden_K() {
                 << std::endl;  //新しいクラスタが選ばれたら,,特に処理はなし??
     }
 
-    //       tmp_delete_atom_k = chosed_new_atom;
+    tmp_delete_atom_k = chosed_new_atom;
 
     // tmp_hidden_Kにtmp_delete_atom_を戻す
     tmp_hidden_K.insert(tmp_hidden_K.begin() + k,
@@ -318,6 +318,33 @@ void IRM_Co_Clustering::update_hidden_L() {
     // tmp_hidden_Lに戻す
     // 長さが同じか確認
   }
+}
+
+void IRM_Co_Clustering::tmp_hidden_L_get_each_cluster_number() {
+  tmp_number_of_l_in_each_cluster.resize(0, 0);  //初期化
+  tmp_number_of_l_in_each_cluster.shrink_to_fit();
+
+  int find_number_in_l = 1;
+  while (1) {
+    auto itr_l =
+        std::find(tmp_hidden_L.begin(), tmp_hidden_L.end(), find_number_in_l);
+    if (itr_l != tmp_hidden_L.end()) {  // find_nuber_in_l を発見した場合
+      tmp_number_of_l_in_each_cluster.push_back(std::count(
+          tmp_hidden_L.begin(), tmp_hidden_L.end(), find_number_in_l));
+      find_number_in_l++;
+
+      /*      if (find_number_in_l > 100) {  //whileのバグの場合の強制終了
+              std::cout << "Toomuch" << std::endl;
+              break;
+            }
+      */
+
+    } else {
+      break;
+    }
+  }
+  tmp_number_of_cluster_L =
+      tmp_number_of_l_in_each_cluster.size();  //クラスタ総数も更新
 }
 
 //完成したtmp_K_hiddenとtmp_hidden_Lを用いて事後確率計算
