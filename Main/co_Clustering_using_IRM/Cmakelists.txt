@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)# CMakeのバージョンを設定
-project(test_IRM_Generate CXX)# プロジェクト名と使用する言語を設定
+project(Co_clustering_using_IRM CXX)# プロジェクト名と使用する言語を設定
 
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
@@ -15,6 +15,6 @@ message("## Boost_LIBRARY_DIRS: ${Boost_LIBRARY_DIRS}")  # デバッグ用：解
 
 
 add_definitions("-Wall -std=c++11") ##遺伝研では変更
-add_executable(Generate_IRM  main_Generate_IRM.cpp   Generate_IRM.cpp  CRP.cpp)###要変更
+add_executable(Co_clustering_using__IRM  main_Co_clustering.cpp IRM_Co_clustering.cpp  CRP.cpp)###要変更
 
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
