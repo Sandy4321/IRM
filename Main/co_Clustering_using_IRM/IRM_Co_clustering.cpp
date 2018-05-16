@@ -195,6 +195,10 @@ void IRM_Co_Clustering::first_get_each_cluster_number() {
 }
 
 void IRM_Co_Clustering::update_hidden_K() {
+  for (const auto &i : tmp_hidden_K) {
+    std::cout << "オリジナルのtmp_hidden_K:" << i << std::endl;
+  }
+
   for (int k = 0; k < hidden_K.size(); k++) {
     // tmp_hidden_Kからk番目を一つ削除
     int tmp_delete_atom_k = 0;
@@ -209,14 +213,30 @@ void IRM_Co_Clustering::update_hidden_K() {
         std::find(tmp_hidden_K.begin(), tmp_hidden_K.end(), tmp_delete_atom_k);
     if (itr_k_search ==
         tmp_hidden_K.end()) {  // tmp_delete_atom_k
-                               // を発見できなかった場合＝クラスの更新
-      std::cout << "tmp_hidden_Kクラスタアップデート" << k << std::endl;
-/*
+                               // を発見できなかった場合＝tmp_hidden_Kの更新
+      std::cout << "tmp_hidden_Kクラスタアップデート" << k
+                << "人目の値(添字なので人なら+1)" << std::endl;
+      std::cout << "それは値" << tmp_delete_atom_k << "より上" << std::endl;
       for (const auto &i : tmp_hidden_K) {
-         std::cout << "tmp_hidden_Kクラスタアップデート" << i <<
-         "の机で要素は"<< k << std::endl;
+        std::cout << "アップデート前のtmp_hidden_K:" << i << std::endl;
       }
-	  */
+
+        for (auto &i : tmp_hidden_K) {
+          if (i > tmp_delete_atom_k) {
+            i -= 1;
+          }
+        }
+      
+      for (const auto &i : tmp_hidden_K) {
+        std::cout << "アップデート後のtmp_hidden_K:" << i << std::endl;
+      }
+
+      /*
+            for (const auto &i : tmp_hidden_K) {
+               std::cout << "tmp_hidden_Kクラスタアップデート" << i <<
+               "の机で要素は"<< k << std::endl;
+            }
+                */
     }
 
     tmp_hidden_K_get_each_cluster_number();  //改めてクラスター数を設定
