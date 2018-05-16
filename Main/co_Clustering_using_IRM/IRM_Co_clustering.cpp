@@ -2,16 +2,16 @@
 // IRM_Co_Clusteringの過程に従って自動的に客を分割
 // 入力:IRM_Co_Clusteringのパラメータalpha,IRM_Co_Clusteringの試行回数(客の人数)
 // 出力:各客の座り方, 各机の客の人数
+#include <boost/foreach.hpp>
 #include <boost/random.hpp>
+#include <boost/tokenizer.hpp>
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <random>
 #include <vector>
 #include "CRP.hpp"
 #include "IRM_Co_clustering.hpp"
-
-#include <boost/foreach.hpp>
-#include <boost/tokenizer.hpp>
 
 IRM_Co_Clustering::IRM_Co_Clustering() {
   IRM_Co_Clustering_co_alpha = 0;
@@ -241,28 +241,8 @@ void IRM_Co_Clustering::update_hidden_K() {
     }
     std::cout << std::endl;
 
-    //各クラスタを選ぶ確率を計算.この実装がかなり難しい
-    std::random_device seed_gen;  //乱数部分はあとでもっとglobalに纏められそう
-    std::mt19937 engine(seed_gen());  //この二行はあとでfor分の外にだす
-
-    std::vector<double> probability_ratio;
-    for (int i = 0; i < tmp_number_of_k_in_each_cluster.size();
-         i++) {  //既存のクラスタを選択する確率
-      probability_ratio.push_back(1);
-    }
-    probability_ratio.push_back(
-        IRM_Co_Clustering_co_alpha);  //新しいクラスタを選択する確率
-
-    for (const auto &i : probability_ratio) {
-      std::cout << "各確率は:" << i << std::endl;
-    }
-    // k番目の要素の最適なクラスターを選択
-    // 新しい客の机を選択
-    std::discrete_distribution<std::size_t> cluster_dis(
-        probability_ratio.begin(), probability_ratio.end());
-
     double chosed_new_atom = 0;
-    chosed_new_atom = cluster_dis(engine);
+    chosed_new_atom = get_new_cluster_for_K();
     std::cout << "クラスタ選択chosed_new_atom=" << chosed_new_atom << std::endl;
     if (chosed_new_atom == tmp_number_of_k_in_each_cluster.size()) {
       std::cout << "新しいクラスタが選ばれた"
@@ -281,6 +261,31 @@ void IRM_Co_Clustering::update_hidden_K() {
     std::cout
         << "Error!!tmp_hidden_Kとhidden_Kの長さが違う,tmp_hidden_Kの更新失敗";
   }
+}
+
+int IRM_Co_Clustering::
+    get_new_cluster_for_K() {  //各クラスタを選ぶ確率を計算.この実装がかなり難しい
+  std::random_device seed_gen;  //乱数部分はあとでもっとglobalに纏められそう
+  std::mt19937 engine(seed_gen());  //この二行はあとでfor分の外にだす
+
+  std::vector<double> probability_ratio;
+  // k番目の要素の最適なクラスターを選択
+  // 新しい客の机を選択
+  std::discrete_distribution<std::size_t> cluster_dis(probability_ratio.begin(),
+                                                      probability_ratio.end());
+
+  for (int i = 0; i < tmp_number_of_k_in_each_cluster.size();
+       i++) {  //既存のクラスタを選択する確率
+    probability_ratio.push_back(1);
+  }
+  probability_ratio.push_back(
+      IRM_Co_Clustering_co_alpha);  //新しいクラスタを選択する確率
+
+  for (const auto &i : probability_ratio) {
+    std::cout << "各確率は:" << i << std::endl;
+  }
+
+  return cluster_dis(engine) + 1;  //返す値は0スタートだけど机は1スタートなので
 }
 
 void IRM_Co_Clustering::tmp_hidden_K_get_each_cluster_number() {
