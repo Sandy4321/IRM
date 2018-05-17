@@ -84,10 +84,8 @@ class IRM_Co_Clustering {
   double new_cluster_prob_L();
 
   void decide_update_tmp_or_not_hidden_KL();
-
-  // void Set_Parameter_Relation_Matrix_Beta();
-  // void decide_Output_Binary_Relation_Matrix();
-  // void run_IRM_Co_Clustering();  // IRM_Co_Clusteringの本体
+  double get_tmp_Posterior_Probability();
+  double Logfactorial(int n);
 
   void Output_by_record_csv();
 
