@@ -23,10 +23,13 @@ class IRM_Co_Clustering {
   double
       IRM_Co_Clustering_Beta_b;  // IRM_Co_Clusteringのパラメータb(Beta分布で使用)
 
+  int k_iterator;
+  int l_iterator;
+
   int number_of_K;  //比較対象Kの総数,パターン認識本の例の顧客数
   int number_of_L;  //比較対象Lの総数,パターン認識本の例の商品数
-  int number_of_cluster_K;  //比較対象Kの総クラスタ数
-  int number_of_cluster_L;  //比較対象Lの総クラスタ数
+  int number_of_cluster_K;      //比較対象Kの総クラスタ数
+  int number_of_cluster_L;      //比較対象Lの総クラスタ数
   int tmp_number_of_cluster_K;  //比較対象Kの総クラスタ数
   int tmp_number_of_cluster_L;  //比較対象Lの総クラスタ数
 
@@ -68,16 +71,23 @@ class IRM_Co_Clustering {
                             std::vector<int> &L_vector);
   void first_get_each_cluster_number();
 
-  void update_hidden_K();
   void tmp_hidden_K_get_each_cluster_number();
+  void update_hidden_K();
+  int get_new_cluster_for_K();
+  double already_cluster_prob_K(int i);
+  double new_cluster_prob_K();
 
+  void tmp_hidden_L_get_each_cluster_number();
   void update_hidden_L();
+  int get_new_cluster_for_L();
+  double already_cluster_prob_L(int i);
+  double new_cluster_prob_L();
 
   void decide_update_tmp_or_not_hidden_KL();
 
-  void Set_Parameter_Relation_Matrix_Beta();
-  void decide_Output_Binary_Relation_Matrix();
-  void run_IRM_Co_Clustering();  // IRM_Co_Clusteringの本体
+  // void Set_Parameter_Relation_Matrix_Beta();
+  // void decide_Output_Binary_Relation_Matrix();
+  // void run_IRM_Co_Clustering();  // IRM_Co_Clusteringの本体
 
   void Output_by_record_csv();
 
