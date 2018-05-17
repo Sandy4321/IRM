@@ -196,6 +196,32 @@ void IRM_Co_Clustering::first_get_each_cluster_number() {
   tmp_number_of_cluster_K = tmp_number_of_k_in_each_cluster.size();
   tmp_number_of_cluster_L = tmp_number_of_l_in_each_cluster.size();
 }
+void IRM_Co_Clustering::tmp_hidden_K_get_each_cluster_number() {
+  tmp_number_of_k_in_each_cluster.resize(0, 0);  //初期化
+  tmp_number_of_k_in_each_cluster.shrink_to_fit();
+
+  int find_number_in_k = 1;
+  while (1) {
+    auto itr_k =
+        std::find(tmp_hidden_K.begin(), tmp_hidden_K.end(), find_number_in_k);
+    if (itr_k != tmp_hidden_K.end()) {  // find_nuber_in_k を発見した場合
+      tmp_number_of_k_in_each_cluster.push_back(std::count(
+          tmp_hidden_K.begin(), tmp_hidden_K.end(), find_number_in_k));
+      find_number_in_k++;
+
+      /*      if (find_number_in_k > 100) {  //whileのバグの場合の強制終了
+              std::cout << "Toomuch" << std::endl;
+              break;
+            }
+      */
+
+    } else {
+      break;
+    }
+  }
+  tmp_number_of_cluster_K =
+      tmp_number_of_k_in_each_cluster.size();  //クラスタ総数も更新
+}
 
 void IRM_Co_Clustering::update_hidden_K() {
   for (const auto &i : tmp_hidden_K) {
@@ -378,43 +404,10 @@ double IRM_Co_Clustering::new_cluster_prob_K() {
   return new_prob;
 }
 
-void IRM_Co_Clustering::tmp_hidden_K_get_each_cluster_number() {
-  tmp_number_of_k_in_each_cluster.resize(0, 0);  //初期化
-  tmp_number_of_k_in_each_cluster.shrink_to_fit();
 
-  int find_number_in_k = 1;
-  while (1) {
-    auto itr_k =
-        std::find(tmp_hidden_K.begin(), tmp_hidden_K.end(), find_number_in_k);
-    if (itr_k != tmp_hidden_K.end()) {  // find_nuber_in_k を発見した場合
-      tmp_number_of_k_in_each_cluster.push_back(std::count(
-          tmp_hidden_K.begin(), tmp_hidden_K.end(), find_number_in_k));
-      find_number_in_k++;
 
-      /*      if (find_number_in_k > 100) {  //whileのバグの場合の強制終了
-              std::cout << "Toomuch" << std::endl;
-              break;
-            }
-      */
 
-    } else {
-      break;
-    }
-  }
-  tmp_number_of_cluster_K =
-      tmp_number_of_k_in_each_cluster.size();  //クラスタ総数も更新
-}
-
-void IRM_Co_Clustering::update_hidden_L() {
-  for (int l = 0; l < hidden_L.size(); l++) {
-    // tmp_hidden_Lからl番目を一つ削除
-    //諸々の更新
-    // l番目に最適なクラスターを選択して決定
-    // tmp_hidden_Lに戻す
-    // 長さが同じか確認
-  }
-}
-
+//ここからLの処理
 void IRM_Co_Clustering::tmp_hidden_L_get_each_cluster_number() {
   tmp_number_of_l_in_each_cluster.resize(0, 0);  //初期化
   tmp_number_of_l_in_each_cluster.shrink_to_fit();
@@ -442,8 +435,20 @@ void IRM_Co_Clustering::tmp_hidden_L_get_each_cluster_number() {
       tmp_number_of_l_in_each_cluster.size();  //クラスタ総数も更新
 }
 
-//完成したtmp_K_hiddenとtmp_hidden_Lを用いて事後確率計算
 
+void IRM_Co_Clustering::update_hidden_L() {
+  for (int l = 0; l < hidden_L.size(); l++) {
+    // tmp_hidden_Lからl番目を一つ削除
+    //諸々の更新
+    // l番目に最適なクラスターを選択して決定
+    // tmp_hidden_Lに戻す
+    // 長さが同じか確認
+  }
+}
+
+
+
+//完成したtmp_K_hiddenとtmp_hidden_Lを用いて事後確率計算
 // tmp_hidden_Kにhidden_Kをアップデートするか判定して更新かそのままにする
 void IRM_Co_Clustering::decide_update_tmp_or_not_hidden_KL() {
   if (tmp_hidden_K.size() != hidden_K.size()) {  //更新そもそもして大丈夫か確認
