@@ -2,7 +2,12 @@
 // Generate_IRMの過程に従って自動的に客を分割
 // 入力:Generate_IRMのパラメータalpha,Generate_IRMの試行回数(客の人数)
 // 出力:各客の座り方, 各机の客の人数
+#include <boost/foreach.hpp>
+#include <boost/math/special_functions/beta.hpp>
+#include <boost/math/special_functions/factorials.hpp>
 #include <boost/random.hpp>
+#include <boost/tokenizer.hpp>
+#include <cmath>
 #include <iostream>
 #include <random>
 #include <vector>
@@ -157,6 +162,118 @@ void Generate_IRM::decide_Output_Binary_Relation_Matrix() {
       Output_Binary_Relation_Matrix[i][j] = dist(engine);
     }
   }
+}
+
+double Generate_IRM::get_Posterior_Probability() {
+  double Posterior_Probability = 0;
+
+  double S1_Posterior_Probability = 0;
+  double S2_Posterior_Probability = 0;
+  double S3_Posterior_Probability = 0;
+
+  S1_Posterior_Probability =
+      (std::pow(Generate_IRM_co_alpha, number_of_k_in_each_cluster.size()));
+  for (auto i = 0; i < number_of_k_in_each_cluster.size(); i++) {
+    S1_Posterior_Probability +=
+        Logfactorial(number_of_k_in_each_cluster[i] - 1);
+  }
+  for (auto i = 0; i < hidden_K.size(); i++) {
+    S1_Posterior_Probability -= std::log(Generate_IRM_co_alpha + i);
+  }
+
+  S2_Posterior_Probability =
+      std::pow(Generate_IRM_co_alpha, number_of_l_in_each_cluster.size());
+  for (auto j = 0; j < number_of_l_in_each_cluster.size(); j++) {
+    S2_Posterior_Probability +=
+        Logfactorial(number_of_l_in_each_cluster[j] - 1);
+  }
+  for (auto j = 0; j < hidden_L.size(); j++) {
+    S2_Posterior_Probability -= std::log(Generate_IRM_co_alpha + j);
+  }
+  /*
+        S1_Posterior_Probability =
+            (std::pow(Generate_IRM_co_alpha,
+     number_of_k_in_each_cluster.size())); for (auto i = 0; i <
+     number_of_k_in_each_cluster.size(); i++) { S1_Posterior_Probability *=
+              (boost::math::factorial<double>(number_of_k_in_each_cluster[i] -
+      1));
+        }
+        for (auto i = 0; i < hidden_K.size(); i++) {
+          S1_Posterior_Probability /= (Generate_IRM_co_alpha + i);
+        }
+
+        S2_Posterior_Probability =
+            std::pow(Generate_IRM_co_alpha, number_of_l_in_each_cluster.size());
+        for (auto j = 0; j < number_of_l_in_each_cluster.size(); j++) {
+          S2_Posterior_Probability *=
+              (boost::math::factorial<double>(number_of_l_in_each_cluster[j] -
+      1));
+        }
+        for (auto j = 0; j < hidden_L.size(); j++) {
+          S2_Posterior_Probability /= (Generate_IRM_co_alpha + j);
+        }
+      */
+
+  for (auto i = 0; i < number_of_k_in_each_cluster.size(); i++) {
+    for (auto j = 0; j < hidden_L.size(); j++) {
+      double n_full_full_i_j = 0;
+      double bar_n_full_full_i_j = 0;
+
+      for (int k = 0; k < Output_Binary_Relation_Matrix.size();
+           k++) {  //クラスタjについてカウント
+
+        if (hidden_K[k] == i + 1) {
+          for (int l = 0;
+               l < Output_Binary_Relation_Matrix[k].size();  // k行を調べる
+               l++) {
+            if (hidden_L[l] == j + 1) {
+              if (Output_Binary_Relation_Matrix[k][l] ==
+                  1) {  // Relation_Matrixの値が1かどうか
+                n_full_full_i_j += 1;
+              } else {
+                bar_n_full_full_i_j += 1;
+              }
+            }
+          }
+        }
+      }
+      S3_Posterior_Probability +=
+          std::lgamma(Generate_IRM_Beta_a + Generate_IRM_Beta_b) -
+          std::lgamma(Generate_IRM_Beta_a) - std::lgamma(Generate_IRM_Beta_b) -
+          std::lgamma(Generate_IRM_Beta_a + n_full_full_i_j +
+                      Generate_IRM_Beta_b + bar_n_full_full_i_j) -
+          std::lgamma(Generate_IRM_Beta_a + n_full_full_i_j) -
+          std::lgamma(Generate_IRM_Beta_b + bar_n_full_full_i_j);
+/*
+          (boost::math::beta(Generate_IRM_Beta_a, Generate_IRM_Beta_b)) 
+          (boost::math::beta(Generate_IRM_Beta_a + n_full_full_i_j,
+                             Generate_IRM_Beta_b + bar_n_full_full_i_j));
+  */ }
+  }
+
+  std::cout << "S1_Posterior_Probability=" << S1_Posterior_Probability
+            << std::endl;
+  std::cout << "S2_Posterior_Probability=" << S2_Posterior_Probability
+            << std::endl;
+  std::cout << "S3_Posterior_Probability=" << S3_Posterior_Probability
+            << std::endl;
+
+  Posterior_Probability = S1_Posterior_Probability + S2_Posterior_Probability +
+                          S3_Posterior_Probability;
+
+  std::cout << "Posterior_Probability=" << Posterior_Probability << std::endl;
+  return Posterior_Probability;
+}
+
+int Generate_IRM::Logfactorial(
+    int n) {  // boostの階乗は桁落ちしてしまうので実装しておく
+  int result = 0;
+  int k;
+
+  for (k = 1; k <= n; k++) {
+    result += std::log(k);
+  }
+  return result;
 }
 
 void Generate_IRM::run_Generate_IRM() {  // Generate_IRMの本体

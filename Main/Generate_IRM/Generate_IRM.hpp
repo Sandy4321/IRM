@@ -6,10 +6,15 @@
 // 出力:各客の座り方, 各机の客の人数
 #include <stdio.h>
 #include <stdlib.h>
+#include <boost/foreach.hpp>
+#include <boost/math/special_functions/beta.hpp>
+#include <boost/math/special_functions/factorials.hpp>
+#include <boost/random.hpp>
+#include <boost/tokenizer.hpp>
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <random>
-
 #include <vector>
 #include "boost/multi_array.hpp"
 
@@ -53,7 +58,8 @@ class Generate_IRM {
   void decide_Output_Binary_Relation_Matrix();
   void run_Generate_IRM();  // Generate_IRMの本体
   void Output_by_record_csv();
-
+  double get_Posterior_Probability();
+  int Logfactorial(int n);
   void show_IRM_parameter();
   void show_datas();
 };
