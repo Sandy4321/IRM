@@ -51,10 +51,10 @@ int main(int argc, const char *argv[]) {
   L_CRP.get_customer_seating_arrangement(tmp_L);
 
   IRM.first_set_hidden_K_L(tmp_K, tmp_L);
-  IRM.first_get_each_cluster_number();
+  IRM.first_get_each_cluster_number();  //ここまでがCRPによる初期化
 
   IRM.update_hidden_K();
-  IRM.decide_update_tmp_or_not_hidden_KL();
+  // IRM.decide_update_tmp_or_not_hidden_KL();
 
   /*
       IRM.Set_Parameter_Relation_Matrix_Beta();
