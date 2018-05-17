@@ -4,6 +4,7 @@
 // 出力:各客の座り方, 各机の客の人数
 #include <boost/foreach.hpp>
 #include <boost/math/special_functions/beta.hpp>
+#include <boost/math/special_functions/factorials.hpp>
 #include <boost/random.hpp>
 #include <boost/tokenizer.hpp>
 #include <cmath>
@@ -321,62 +322,66 @@ int IRM_Co_Clustering::
 
 double IRM_Co_Clustering::already_cluster_prob_K(
     int i_cluster_of_K) {  // i番目の顧客クラスターについて調べる
-  double already_prob_K = 1;
 
-  for (int j = 0; j < tmp_number_of_cluster_L; j++) {  //クラスタ数の数だけ実施
-    int n_full_full_i_j = 0;
-    int bar_n_full_full_i_j = 0;
-    int n_notk_full_i_j = 0;
-    int bar_n_notk_full_i_j = 0;
+double already_prob_K = 1;
+  /*
+for (int j = 0; j < tmp_number_of_cluster_L; j++) {  //クラスタ数の数だけ実施
+int n_full_full_i_j = 0;
+int bar_n_full_full_i_j = 0;
+int n_notk_full_i_j = 0;
+int bar_n_notk_full_i_j = 0;
 
-    int n_k_full_i_j = 0;      //今回は補助変数
-    int bar_n_k_full_i_j = 0;  //今回は補助変数
-    for (int k = 0; k < Input_Binary_Relation_Matrix.size();
-         k++) {  //クラスタjについてカウント
-      if (tmp_hidden_K[k] == i_cluster_of_K) {
-        for (int l = 0;
-             l <
-             Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
-             l++) {
-          if (tmp_hidden_L[l] == j) {
-            if (Input_Binary_Relation_Matrix[k_iterator][l] ==
-                1) {  // Relation_Matrixの値が1かどうか
-              n_full_full_i_j += 1;
-            } else {
-              bar_n_full_full_i_j += 1;
-            }
-          }
-        }
-      }
-    }
-    for (int l = 0;
-         l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
-         l++) {
-      if (tmp_hidden_L[l] == j) {  //要素lがクラスタjに属しているかどうか
-        if (Input_Binary_Relation_Matrix[k_iterator][l] ==
-            1) {  // Relation_Matrixの値が1かどうか
-          n_k_full_i_j += 1;
-        } else {
-          bar_n_k_full_i_j += 1;
-        }
-      }
-    }
-    n_notk_full_i_j = n_full_full_i_j - n_k_full_i_j;
-    bar_n_notk_full_i_j = bar_n_full_full_i_j - bar_n_k_full_i_j;
+int n_k_full_i_j = 0;      //今回は補助変数
+int bar_n_k_full_i_j = 0;  //今回は補助変数
+for (int k = 0; k < Input_Binary_Relation_Matrix.size();
+k++) {  //クラスタjについてカウント
+if (tmp_hidden_K[k] == i_cluster_of_K) {
+for (int l = 0;
+l <
+Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
+l++) {
+if (tmp_hidden_L[l] == j) {
+if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+  1) {  // Relation_Matrixの値が1かどうか
+n_full_full_i_j += 1;
+} else {
+bar_n_full_full_i_j += 1;
+}
+}
+}
+}
+}
+for (int l = 0;
+l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
+l++) {
+if (tmp_hidden_L[l] == j) {  //要素lがクラスタjに属しているかどうか
+if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+1) {  // Relation_Matrixの値が1かどうか
+n_k_full_i_j += 1;
+} else {
+bar_n_k_full_i_j += 1;
+}
+}
+}
+n_notk_full_i_j = n_full_full_i_j - n_k_full_i_j;
+bar_n_notk_full_i_j = bar_n_full_full_i_j - bar_n_k_full_i_j;
 
-    already_prob_K *=
-        ((double)tmp_number_of_l_in_each_cluster[i_cluster_of_K] *
-         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
-                            IRM_Co_Clustering_Beta_b + bar_n_full_full_i_j)) /
-         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_notk_full_i_j,
-                            IRM_Co_Clustering_Beta_b + bar_n_notk_full_i_j)));
-    // already_prob_K =1;テスト用
-  }
+already_prob_K *=
+((double)tmp_number_of_l_in_each_cluster[i_cluster_of_K] *
+(boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
+              IRM_Co_Clustering_Beta_b + bar_n_full_full_i_j)) /
+(boost::math::beta(IRM_Co_Clustering_Beta_a + n_notk_full_i_j,
+              IRM_Co_Clustering_Beta_b + bar_n_notk_full_i_j)));
+}
+*/
+   already_prob_K =1; 
+   //テスト用
 
   return already_prob_K;
 }
 double IRM_Co_Clustering::new_cluster_prob_K() {
   double new_prob = 1;
+  /*
   for (int j = 0; j < tmp_number_of_cluster_L; j++) {  //クラスタ数の数だけ実施
     int n_k_full_i_j = 0;
     int bar_n_k_full_i_j = 0;
@@ -399,8 +404,10 @@ double IRM_Co_Clustering::new_cluster_prob_K() {
                             IRM_Co_Clustering_Beta_b + bar_n_k_full_i_j)) /
          (boost::math::beta(IRM_Co_Clustering_Beta_a,
                             IRM_Co_Clustering_Beta_b)));
-    // new_prob *=IRM_Co_Clustering_co_alpha; テスト用
   }
+  */
+  new_prob *= IRM_Co_Clustering_co_alpha;
+  //テスト用
   return new_prob;
 }
 
@@ -636,6 +643,8 @@ void IRM_Co_Clustering::decide_update_tmp_or_not_hidden_KL() {
         << "Error!!tmp_Posterior_Probability か Posterior_Probabilityが違う";
   }
 
+  tmp_Posterior_Probability = get_tmp_Posterior_Probability();
+
   if (tmp_Posterior_Probability > Max_Posterior_Probability) {
     // hidden_Kとhidden_Lの更新処理
     Max_Posterior_Probability = tmp_Posterior_Probability;
@@ -647,6 +656,46 @@ void IRM_Co_Clustering::decide_update_tmp_or_not_hidden_KL() {
     std::cout << "Not_Updated!!" << std::endl;
   }
   //続行するか終わるかの処理
+}
+
+double IRM_Co_Clustering::get_tmp_Posterior_Probability() {
+  double Posterior_Probability = 0;
+  double S1_Posterior_Probability = 0;
+  double S2_Posterior_Probability = 0;
+  double S3_Posterior_Probability = 0;
+
+  S1_Posterior_Probability = (std::pow(IRM_Co_Clustering_co_alpha,
+                                       tmp_number_of_k_in_each_cluster.size()));
+  for (auto i = 0; i < tmp_number_of_k_in_each_cluster.size(); i++) {
+    S1_Posterior_Probability *= (boost::math::factorial<double>(
+        tmp_number_of_k_in_each_cluster[i] - 1));
+  }
+  for (auto i = 0; i < hidden_K.size(); i++) {
+    S1_Posterior_Probability /= (IRM_Co_Clustering_co_alpha + i);
+  }
+
+  S2_Posterior_Probability = std::pow(IRM_Co_Clustering_co_alpha,
+                                      tmp_number_of_l_in_each_cluster.size());
+  for (auto i = 0; i < tmp_number_of_l_in_each_cluster.size(); i++) {
+    S2_Posterior_Probability *= (boost::math::factorial<double>(
+        tmp_number_of_l_in_each_cluster[i] - 1));
+  }
+  for (auto i = 0; i < hidden_L.size(); i++) {
+    S2_Posterior_Probability /= (IRM_Co_Clustering_co_alpha + i);
+  }
+
+  std::cout << "S1_Posterior_Probability=" << S1_Posterior_Probability
+            << std::endl;
+  std::cout << "S2_Posterior_Probability=" << S2_Posterior_Probability
+            << std::endl;
+  std::cout << "S3_Posterior_Probability=" << S3_Posterior_Probability
+            << std::endl;
+  /*
+     Posterior_Probability = S1_Posterior_Probability * S2_Posterior_Probability
+     *S3_Posterior_Probability;
+  */
+  std::cout << "Posterior_Probability=" << Posterior_Probability << std::endl;
+  return Posterior_Probability;
 }
 
 void IRM_Co_Clustering::Output_by_record_csv() {
