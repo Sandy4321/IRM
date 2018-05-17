@@ -3,6 +3,7 @@
 // 入力:IRM_Co_Clusteringのパラメータalpha,IRM_Co_Clusteringの試行回数(客の人数)
 // 出力:各客の座り方, 各机の客の人数
 #include <boost/foreach.hpp>
+#include <boost/math/special_functions/beta.hpp>
 #include <boost/random.hpp>
 #include <boost/tokenizer.hpp>
 #include <cmath>
@@ -14,6 +15,8 @@
 #include "IRM_Co_clustering.hpp"
 
 IRM_Co_Clustering::IRM_Co_Clustering() {
+  k_iterator = 0;
+  l_iterator = 0;
   IRM_Co_Clustering_co_alpha = 0;
   IRM_Co_Clustering_Beta_a = 0;
   IRM_Co_Clustering_Beta_b = 0;
@@ -201,6 +204,7 @@ void IRM_Co_Clustering::update_hidden_K() {
 
   for (int k = 0; k < hidden_K.size(); k++) {
     // tmp_hidden_Kからk番目を一つ削除
+    k_iterator = k;
     int tmp_delete_atom_k = 0;
     tmp_delete_atom_k = tmp_hidden_K[k];
 
@@ -276,16 +280,102 @@ int IRM_Co_Clustering::
 
   for (int i = 0; i < tmp_number_of_k_in_each_cluster.size();
        i++) {  //既存のクラスタを選択する確率
-    probability_ratio.push_back(1);
+    int iter_i = i;
+    probability_ratio.push_back(already_cluster_prob_K(iter_i));
   }
   probability_ratio.push_back(
-      IRM_Co_Clustering_co_alpha);  //新しいクラスタを選択する確率
+      new_cluster_prob_K());  //新しいクラスタを選択する確率
 
   for (const auto &i : probability_ratio) {
     std::cout << "各確率は:" << i << std::endl;
   }
 
   return cluster_dis(engine) + 1;  //返す値は0スタートだけど机は1スタートなので
+}
+
+double IRM_Co_Clustering::already_cluster_prob_K(
+    int i_cluster_of_K) {  // i番目の顧客クラスターについて調べる
+  double already_prob_K = 1;
+
+  for (int j = 0; j < tmp_number_of_cluster_L; j++) {  //クラスタ数の数だけ実施
+    int n_full_full_i_j = 0;
+    int bar_n_full_full_i_j = 0;
+    int n_notk_full_i_j = 0;
+    int bar_n_notk_full_i_j = 0;
+
+    int n_k_full_i_j = 0;      //今回は補助変数
+    int bar_n_k_full_i_j = 0;  //今回は補助変数
+    for (int k = 0; k < Input_Binary_Relation_Matrix.size();
+         k++) {  //クラスタjについてカウント
+      if (tmp_hidden_K[k] == i_cluster_of_K) {
+        for (int l = 0;
+             l <
+             Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
+             l++) {
+          if (tmp_hidden_L[l] == j) {
+            if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+                1) {  // Relation_Matrixの値が1かどうか
+              n_full_full_i_j += 1;
+            } else {
+              bar_n_full_full_i_j += 1;
+            }
+          }
+        }
+      }
+    }
+    for (int l = 0;
+         l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
+         l++) {
+      if (tmp_hidden_L[l] == j) {  //要素lがクラスタjに属しているかどうか
+        if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+            1) {  // Relation_Matrixの値が1かどうか
+          n_k_full_i_j += 1;
+        } else {
+          bar_n_k_full_i_j += 1;
+        }
+      }
+    }
+    n_notk_full_i_j = n_full_full_i_j - n_k_full_i_j;
+    bar_n_notk_full_i_j = bar_n_full_full_i_j - bar_n_k_full_i_j;
+
+    already_prob_K *=
+        ((double)tmp_number_of_l_in_each_cluster[i_cluster_of_K] *
+         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
+                            IRM_Co_Clustering_Beta_b + bar_n_full_full_i_j)) /
+         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_notk_full_i_j,
+                            IRM_Co_Clustering_Beta_b + bar_n_notk_full_i_j)));
+    // already_prob_K =1;テスト用
+  }
+
+  return already_prob_K;
+}
+double IRM_Co_Clustering::new_cluster_prob_K() {
+  double new_prob = 1;
+  for (int j = 0; j < tmp_number_of_cluster_L; j++) {  //クラスタ数の数だけ実施
+    int n_k_full_i_j = 0;
+    int bar_n_k_full_i_j = 0;
+    for (int l = 0;
+         l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
+         l++) {
+      if (tmp_hidden_L[l] == j) {  //要素lがクラスタjに属しているかどうか
+        if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+            1) {  // Relation_Matrixの値が1かどうか
+          n_k_full_i_j += 1;
+        } else {
+          bar_n_k_full_i_j += 1;
+        }
+      }
+    }
+
+    new_prob *=  //
+        (IRM_Co_Clustering_co_alpha *
+         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_k_full_i_j,
+                            IRM_Co_Clustering_Beta_b + bar_n_k_full_i_j)) /
+         (boost::math::beta(IRM_Co_Clustering_Beta_a,
+                            IRM_Co_Clustering_Beta_b)));
+    // new_prob *=IRM_Co_Clustering_co_alpha; テスト用
+  }
+  return new_prob;
 }
 
 void IRM_Co_Clustering::tmp_hidden_K_get_each_cluster_number() {
