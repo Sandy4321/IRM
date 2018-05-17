@@ -404,9 +404,6 @@ double IRM_Co_Clustering::new_cluster_prob_K() {
   return new_prob;
 }
 
-
-
-
 //ここからLの処理
 void IRM_Co_Clustering::tmp_hidden_L_get_each_cluster_number() {
   tmp_number_of_l_in_each_cluster.resize(0, 0);  //初期化
@@ -435,18 +432,193 @@ void IRM_Co_Clustering::tmp_hidden_L_get_each_cluster_number() {
       tmp_number_of_l_in_each_cluster.size();  //クラスタ総数も更新
 }
 
-
 void IRM_Co_Clustering::update_hidden_L() {
+  // tmp_hidden_Lからl番目を一つ削除
+  //諸々の更新
+  // l番目に最適なクラスターを選択して決定
+  // tmp_hidden_Lに戻す
+  // 長さが同じか確認
+  for (const auto &i : tmp_hidden_L) {
+    std::cout << "オリジナルのtmp_hidden_L:" << i << std::endl;
+  }
+
   for (int l = 0; l < hidden_L.size(); l++) {
-    // tmp_hidden_Lからl番目を一つ削除
-    //諸々の更新
-    // l番目に最適なクラスターを選択して決定
-    // tmp_hidden_Lに戻す
-    // 長さが同じか確認
+    // tmp_hidden_Kからk番目を一つ削除
+    l_iterator = l;
+    int tmp_delete_atom_l = 0;
+    tmp_delete_atom_l = tmp_hidden_L[l_iterator];
+
+    tmp_hidden_L.erase(tmp_hidden_L.begin() + l);
+    tmp_hidden_L.shrink_to_fit();
+    //諸々の更新(クラスタ数0になるものがあるかどうか)
+    //	tmp_delete_atom_kをerase済みtmp_hidden_Kから探す
+
+    auto itr_l_search =
+        std::find(tmp_hidden_L.begin(), tmp_hidden_L.end(), tmp_delete_atom_l);
+    if (itr_l_search ==
+        tmp_hidden_L.end()) {  // tmp_delete_atom_l
+                               // を発見できなかった場合＝tmp_hidden_Lの更新
+      std::cout << "tmp_hidden_Lクラスタアップデート" << l
+                << "人目の値(添字なので人なら+1)" << std::endl;
+      std::cout << "それは値" << tmp_delete_atom_l << "より上" << std::endl;
+      for (const auto &i : tmp_hidden_L) {
+        std::cout << "アップデート前のtmp_hidden_L:" << i << std::endl;
+      }
+
+      for (auto &i : tmp_hidden_L) {
+        if (i > tmp_delete_atom_l) {
+          i -= 1;
+        }
+      }
+
+      std::cout << "そして" << std::endl;
+
+      for (const auto &i : tmp_hidden_L) {
+        std::cout << "アップデート後の時の各tmp_hidden_L:" << i << std::endl;
+      }
+    }
+
+    tmp_hidden_L_get_each_cluster_number();  //改めてクラスター数を設定
+    for (const auto &i : tmp_number_of_l_in_each_cluster) {
+      std::cout << l << "番目の処理の各number_of_k_in_each_cluster:" << i
+                << std::endl;
+    }
+    std::cout << std::endl;
+
+    double chosed_new_atom = 0;
+    chosed_new_atom = get_new_cluster_for_L();
+    std::cout << "クラスタ選択chosed_new_atom=" << chosed_new_atom << std::endl;
+    if (chosed_new_atom == tmp_number_of_l_in_each_cluster.size()) {
+      std::cout << "新しいクラスタが選ばれた"
+                << std::endl;  //新しいクラスタが選ばれたら,,特に処理はなし??
+    }
+
+    tmp_delete_atom_l = chosed_new_atom;
+
+    // tmp_hidden_Kにtmp_delete_atom_を戻す
+    tmp_hidden_L.insert(tmp_hidden_L.begin() + l,
+                        tmp_delete_atom_l);  // tmp_delete_atom_kは変更する**
+  }
+
+  // 長さが同じか確認
+  if (tmp_hidden_L.size() != hidden_L.size()) {
+    std::cout
+        << "Error!!tmp_hidden_Kとhidden_Kの長さが違う,tmp_hidden_Kの更新失敗";
   }
 }
 
+int IRM_Co_Clustering::
+    get_new_cluster_for_L() {  //各クラスタを選ぶ確率を計算.この実装がかなり難しい
+  std::random_device seed_gen;  //乱数部分はあとでもっとglobalに纏められそう
+  std::mt19937 engine(seed_gen());  //この二行はあとでfor分の外にだす
 
+  std::vector<double> probability_ratio;
+  // l番目の要素の最適なクラスターを選択
+  std::discrete_distribution<std::size_t> cluster_dis(probability_ratio.begin(),
+                                                      probability_ratio.end());
+
+  for (int j = 0; j < tmp_number_of_l_in_each_cluster.size();
+       j++) {  //既存のクラスタを選択する確率
+    int iter_j = j;
+    probability_ratio.push_back(already_cluster_prob_L(iter_j));
+  }
+  probability_ratio.push_back(
+      new_cluster_prob_L());  //新しいクラスタを選択する確率
+
+  for (const auto &i : probability_ratio) {
+    std::cout << "Lの各確率は:" << i << std::endl;
+  }
+
+  return cluster_dis(engine) + 1;  //返す値は0スタートだけど机は1スタートなので
+}
+
+double IRM_Co_Clustering::already_cluster_prob_L(
+    int i_cluster_of_L) {  // i番目の顧客クラスターについて調べる
+  double already_prob_L = 1;
+  /*//Kのまま
+
+    for (int j = 0; j < tmp_number_of_cluster_L; j++) { //クラスタ数の数だけ実施
+      int n_full_full_i_j = 0;
+      int bar_n_full_full_i_j = 0;
+      int n_notk_full_i_j = 0;
+      int bar_n_notk_full_i_j = 0;
+
+      int n_k_full_i_j = 0;      //今回は補助変数
+      int bar_n_k_full_i_j = 0;  //今回は補助変数
+      for (int k = 0; k < Input_Binary_Relation_Matrix.size();
+           k++) {  //クラスタjについてカウント
+        if (tmp_hidden_K[k] == i_cluster_of_K) {
+          for (int l = 0;
+               l <
+               Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
+               l++) {
+            if (tmp_hidden_L[l] == j) {
+              if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+                  1) {  // Relation_Matrixの値が1かどうか
+                n_full_full_i_j += 1;
+              } else {
+                bar_n_full_full_i_j += 1;
+              }
+            }
+          }
+        }
+      }
+      for (int l = 0;
+           l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
+           l++) {
+        if (tmp_hidden_L[l] == j) {  //要素lがクラスタjに属しているかどうか
+          if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+              1) {  // Relation_Matrixの値が1かどうか
+            n_k_full_i_j += 1;
+          } else {
+            bar_n_k_full_i_j += 1;
+          }
+        }
+      }
+      n_notk_full_i_j = n_full_full_i_j - n_k_full_i_j;
+      bar_n_notk_full_i_j = bar_n_full_full_i_j - bar_n_k_full_i_j;
+
+      already_prob_K *=
+          ((double)tmp_number_of_l_in_each_cluster[i_cluster_of_K] *
+           (boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
+                              IRM_Co_Clustering_Beta_b + bar_n_full_full_i_j)) /
+           (boost::math::beta(IRM_Co_Clustering_Beta_a + n_notk_full_i_j,
+                              IRM_Co_Clustering_Beta_b + bar_n_notk_full_i_j)));
+          */
+  already_prob_L = 1;  // テスト用
+
+  return already_prob_L;
+}
+double IRM_Co_Clustering::new_cluster_prob_L() {
+  double new_prob = 1;
+  /*
+  for (int j = 0; j < tmp_number_of_cluster_L; j++) {  //クラスタ数の数だけ実施
+    int n_k_full_i_j = 0;
+    int bar_n_k_full_i_j = 0;
+    for (int l = 0;
+         l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
+         l++) {
+      if (tmp_hidden_L[l] == j) {  //要素lがクラスタjに属しているかどうか
+        if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+            1) {  // Relation_Matrixの値が1かどうか
+          n_k_full_i_j += 1;
+        } else {
+          bar_n_k_full_i_j += 1;
+        }
+      }
+    }
+
+    new_prob *=  //
+        (IRM_Co_Clustering_co_alpha *
+         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_k_full_i_j,
+                            IRM_Co_Clustering_Beta_b + bar_n_k_full_i_j)) /
+         (boost::math::beta(IRM_Co_Clustering_Beta_a,
+                            IRM_Co_Clustering_Beta_b)));
+     }
+  */
+  new_prob *= IRM_Co_Clustering_co_alpha;  //テスト用
+  return new_prob;
+}
 
 //完成したtmp_K_hiddenとtmp_hidden_Lを用いて事後確率計算
 // tmp_hidden_Kにhidden_Kをアップデートするか判定して更新かそのままにする
