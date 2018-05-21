@@ -44,7 +44,11 @@ class Generate_IRM {
 
   std::vector<double> Parameter_Relation_k;
   std::vector<std::vector<double> >
-      Parameter_Relation_Matrix;  // KとLの各クラスタの関係を表すnumber_of_cluster_K*number_of_cluster_Lのパラメータ行列
+      Parameter_Relation_Matrix;  //number_of_cluster_K*number_of_cluster_Lのパラメータ行列
+
+  std::vector<std::vector<double> >
+      Output_size_Parameter_Relation_Matrix;  //K*Lの各要素のパラメータ関係を表示する行列(Visualize用)
+
 
  public:
   Generate_IRM();
