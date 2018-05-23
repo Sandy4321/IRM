@@ -28,6 +28,7 @@ Output_sorted_by_both = Output_sorted_by_index.sort_index(axis=1)
 print Output_sorted_by_both
 
 Output_Parameter_label = pd.DataFrame(data=csv_label_list, index=tate,columns=x)
+print Output_Parameter_label
 Output_Parameter_label_sorted_by_index = Output_Parameter_label.sort_index()
 Output_Parameter_label_sorted_by_both = Output_Parameter_label_sorted_by_index.sort_index(axis=1)
 print Output_Parameter_label_sorted_by_both
