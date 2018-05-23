@@ -23,38 +23,38 @@ class IRM_Co_Clustering {
   double
       IRM_Co_Clustering_Beta_b;  // IRM_Co_Clusteringのパラメータb(Beta分布で使用)
 
-  int k_iterator;
-  int l_iterator;
+  unsigned int k_iterator;
+  unsigned int l_iterator;
 
-  int number_of_K;  //比較対象Kの総数,パターン認識本の例の顧客数
-  int number_of_L;  //比較対象Lの総数,パターン認識本の例の商品数
-  int number_of_cluster_K;      //比較対象Kの総クラスタ数
-  int number_of_cluster_L;      //比較対象Lの総クラスタ数
-  int tmp_number_of_cluster_K;  //比較対象Kの総クラスタ数
-  int tmp_number_of_cluster_L;  //比較対象Lの総クラスタ数
+  unsigned int number_of_K;  //比較対象Kの総数,パターン認識本の例の顧客数
+  unsigned int number_of_L;  //比較対象Lの総数,パターン認識本の例の商品数
+  unsigned int number_of_cluster_K;      //比較対象Kの総クラスタ数
+  unsigned int number_of_cluster_L;      //比較対象Lの総クラスタ数
+  unsigned int tmp_number_of_cluster_K;  //比較対象Kの総クラスタ数
+  unsigned int tmp_number_of_cluster_L;  //比較対象Lの総クラスタ数
 
   double Max_Posterior_Probability;
   double tmp_Posterior_Probability;
 
-  std::vector<int> hidden_K;  //比較対象Kの潜在系列(Kの要素の各所属クラスタ情報)
-  std::vector<int> hidden_L;  //比較対象Lの潜在系列(Lの要素の各所属クラスタ情報)
+  std::vector<unsigned int> hidden_K;  //比較対象Kの潜在系列(Kの要素の各所属クラスタ情報)
+  std::vector<unsigned int> hidden_L;  //比較対象Lの潜在系列(Lの要素の各所属クラスタ情報)
 
-  std::vector<int>
+  std::vector<unsigned int>
       tmp_hidden_K;  //現時点での比較対象Kの潜在系列(Kの要素の各所属クラスタ情報)
-  std::vector<int>
+  std::vector<unsigned int>
       tmp_hidden_L;  //現時点での比較対象Lの潜在系列(Lの要素の各所属クラスタ情報)
 
-  std::vector<int> number_of_k_in_each_cluster;  //比較対象Kの各クラスタの要素数
-  std::vector<int> number_of_l_in_each_cluster;  //比較対象Lの各クラスタの要素数
-  std::vector<int>
+  std::vector<unsigned int> number_of_k_in_each_cluster;  //比較対象Kの各クラスタの要素数
+  std::vector<unsigned int> number_of_l_in_each_cluster;  //比較対象Lの各クラスタの要素数
+  std::vector<unsigned int>
       tmp_number_of_k_in_each_cluster;  //比較対象Kの各クラスタの要素数
-  std::vector<int>
+  std::vector<unsigned int>
       tmp_number_of_l_in_each_cluster;  //比較対象Lの各クラスタの要素数
 
-  std::vector<int>
+  std::vector<unsigned int>
       Input_Binary_Relation_k;  // 比較対象Kのk番目の要素とLの関係を表すL長vector
 
-  std::vector<std::vector<int> >
+  std::vector<std::vector<unsigned int> >
       Input_Binary_Relation_Matrix;  // KとLの関係を表すK*Lの二次元の二値行列.IRMの学習データ
 
   std::vector<double> Parameter_Relation_k;

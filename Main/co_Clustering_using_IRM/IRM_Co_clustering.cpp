@@ -542,7 +542,7 @@ int IRM_Co_Clustering::
 double IRM_Co_Clustering::already_cluster_prob_L(
     int j_cluster_of_L) {  // j番目の商品クラスターについて調べる
   double already_prob_L = 1;
-  /*
+  
     for (int i = 0; i < tmp_number_of_cluster_K; i++) { //クラスタ数の数だけ実施
       int n_full_full_i_j = 0;
       int bar_n_full_full_i_j = 0;
@@ -593,14 +593,14 @@ double IRM_Co_Clustering::already_cluster_prob_L(
                               IRM_Co_Clustering_Beta_b +
     bar_n_not_l_full_i_j)));
     }
-    */
+   
   already_prob_L = 1;
 
   return already_prob_L;
 }
 double IRM_Co_Clustering::new_cluster_prob_L() {
   double new_prob = 1;
-  /*
+  
     for (int j = 0; j < tmp_number_of_cluster_L; j++) {
       //クラスタ数の数だけ実施
       int n_k_full_i_j = 0;
@@ -628,7 +628,7 @@ double IRM_Co_Clustering::new_cluster_prob_L() {
     }
 
     // new_prob *= IRM_Co_Clustering_co_alpha;  //テスト用
-    */
+   
   return new_prob;
 }
 
