@@ -24,10 +24,10 @@ int main(int argc, const char *argv[]) {
     return 0;
   }
 
-  double parameter_co_alpha = std::atoi(
+  double parameter_co_alpha = std::atof(
       argv[2]);  //二つのCRPに共通のパラメータalpha(共通でなくてもよし)
-  double parameter_Beta_a = std::atoi(argv[3]);
-  double parameter_Beta_b = std::atoi(argv[4]);
+  double parameter_Beta_a = std::atof(argv[3]);
+  double parameter_Beta_b = std::atof(argv[4]);
 
   IRM_Co_Clustering IRM;
 
@@ -54,14 +54,15 @@ int main(int argc, const char *argv[]) {
   IRM.first_get_each_cluster_number();  //ここまでがCRPによる初期化
 
   // IRM.update_hidden_K();
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 1; i++) {
     IRM.update_hidden_K();
 
-    IRM.update_hidden_L();
+    // IRM.update_hidden_L();
     IRM.decide_update_tmp_or_not_hidden_KL();
     IRM.show_IRM_parameter();
     IRM.show_datas();
-    std::cout << i + 1 << std::endl;
+    std::cout << i + 1 << "回" << std::endl;
+    // IRM.Output_by_record_csv();
   }
   return 0;
 }

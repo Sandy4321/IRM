@@ -600,34 +600,35 @@ double IRM_Co_Clustering::already_cluster_prob_L(
 }
 double IRM_Co_Clustering::new_cluster_prob_L() {
   double new_prob = 1;
-
-  for (int j = 0; j < tmp_number_of_cluster_L; j++) {
-    //クラスタ数の数だけ実施
-    int n_k_full_i_j = 0;
-    int bar_n_k_full_i_j = 0;
-    for (int l = 0;
-         l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
-         l++) {
-      if (tmp_hidden_L[l] == j + 1) {
-        //要素lがクラスタjに属しているかどうか
-        if (Input_Binary_Relation_Matrix[k_iterator][l] ==
-            1) {  // Relation_Matrixの値が1かどうか
-          n_k_full_i_j += 1;
-        } else {
-          bar_n_k_full_i_j += 1;
+  /*
+    for (int j = 0; j < tmp_number_of_cluster_L; j++) {
+      //クラスタ数の数だけ実施
+      int n_k_full_i_j = 0;
+      int bar_n_k_full_i_j = 0;
+      for (int l = 0;
+           l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
+           l++) {
+        if (tmp_hidden_L[l] == j + 1) {
+          //要素lがクラスタjに属しているかどうか
+          if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+              1) {  // Relation_Matrixの値が1かどうか
+            n_k_full_i_j += 1;
+          } else {
+            bar_n_k_full_i_j += 1;
+          }
         }
       }
+
+      new_prob *=  //
+          (IRM_Co_Clustering_co_alpha *
+           (boost::math::beta(IRM_Co_Clustering_Beta_a + n_k_full_i_j,
+                              IRM_Co_Clustering_Beta_b + bar_n_k_full_i_j)) /
+           (boost::math::beta(IRM_Co_Clustering_Beta_a,
+                              IRM_Co_Clustering_Beta_b)));
     }
 
-    new_prob *=  //
-        (IRM_Co_Clustering_co_alpha *
-         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_k_full_i_j,
-                            IRM_Co_Clustering_Beta_b + bar_n_k_full_i_j)) /
-         (boost::math::beta(IRM_Co_Clustering_Beta_a,
-                            IRM_Co_Clustering_Beta_b)));
-  }
-
-  // new_prob *= IRM_Co_Clustering_co_alpha;  //テスト用
+    // new_prob *= IRM_Co_Clustering_co_alpha;  //テスト用
+    */
   return new_prob;
 }
 
@@ -796,16 +797,22 @@ void IRM_Co_Clustering::Output_by_record_csv() {
   if ((fc = fopen("hidden_K.csv", "w")) != NULL) {
     for (int i = 0; i < hidden_K.size(); i++) {
       fprintf(fc, "%d\n", hidden_K[i]);
+      if (i != hidden_K.size() - 1) {
+        fprintf(fc, ",");
+      }
     }
 
-    fclose(fa);
+    fclose(fc);
   } else {
     std::cout << "File cannot Open" << std::endl;
   }
   FILE *fd;
   if ((fd = fopen("hidden_L.csv", "w")) != NULL) {
-    for (int i = 0; i < hidden_L.size(); i++) {
-      fprintf(fd, "%d\n", hidden_L[i]);
+    for (int j = 0; j < hidden_L.size(); j++) {
+      fprintf(fd, "%d\n", hidden_L[j]);
+      if (j != hidden_L.size() - 1) {
+        fprintf(fd, ",");
+      }
     }
 
     fclose(fd);
@@ -825,11 +832,30 @@ void IRM_Co_Clustering::Output_by_record_csv() {
     }
     fprintf(fe, "number_of_cluster_L==%d\n", number_of_cluster_L);
 
-    fclose(fd);
+    fclose(fe);
+  } else {
+    std::cout << "File cannot Open" << std::endl;
+  }
+
+  FILE *ff;
+  if ((ff = fopen("Output_size_Parameter_Relation_Matrix.csv", "w")) != NULL) {
+    for (int i = 0; i < Input_Binary_Relation_Matrix.size(); i++) {
+      for (int j = 0; j < Input_Binary_Relation_Matrix[i].size(); j++) {
+        //カンマで区切ることでCSVファイルとする
+        fprintf(ff, "%lf",
+                Parameter_Relation_Matrix[hidden_K[i] - 1][hidden_L[j] - 1]);
+        if (j != Input_Binary_Relation_Matrix[i].size() - 1) {
+          fprintf(ff, ",");
+        }
+      }
+      fprintf(ff, "\n");
+    }
+    fclose(ff);
   } else {
     std::cout << "File cannot Open" << std::endl;
   }
 }
+
 void IRM_Co_Clustering::show_IRM_parameter() {
   std::cout << "IRM_Co_Clustering_co_alpha=" << IRM_Co_Clustering_co_alpha
             << std::endl;
