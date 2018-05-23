@@ -133,6 +133,13 @@ void Generate_IRM::
       double ga = g_dis_a(engine);
       double gb = g_dis_b(engine);
       Parameter_Relation_Matrix[i][j] = ga / (ga + gb);
+/*
+      std::cout << "ga=" << ga << std::endl;
+      std::cout << "gb=" << gb << std::endl;
+      std::cout << "Each Parameter_Relation_Matrix[i][j]"
+                << " " << i << " " << j << " "
+                << Parameter_Relation_Matrix[i][j] << std::endl;
+*/
     }
   }
 }
@@ -140,8 +147,8 @@ void Generate_IRM::decide_Output_Binary_Relation_Matrix() {
   //各Relation_Matrixをベルヌーイ分布から決定
   Output_Binary_Relation_Matrix = std::vector<std::vector<int>>(
       hidden_K.size(), std::vector<int>(hidden_L.size(), 0));
-
-  /*  std::cout << "Output_Binary_Relation_Matrix!!!!!" << std::endl;
+  /*
+    std::cout << "Output_Binary_Relation_Matrix!!!!!" << std::endl;
     for (int i = 0; i < Output_Binary_Relation_Matrix.size(); i++) {
       for (int j = 0; j < Output_Binary_Relation_Matrix[i].size(); j++) {
         std::cout << Output_Binary_Relation_Matrix[i][j] << "  ";
@@ -160,7 +167,10 @@ void Generate_IRM::decide_Output_Binary_Relation_Matrix() {
       theta = Parameter_Relation_Matrix[hidden_K[i] - 1][hidden_L[j] - 1];
       std::bernoulli_distribution dist(theta);
       Output_Binary_Relation_Matrix[i][j] = dist(engine);
+
+      std::cout << theta << " ";  // tmp
     }
+    std::cout << std::endl;  // tmp
   }
 }
 
@@ -316,10 +326,10 @@ void Generate_IRM::Output_by_record_csv() {
   if ((fc = fopen("hidden_K.csv", "w")) != NULL) {
     for (int i = 0; i < hidden_K.size(); i++) {
       fprintf(fc, "%d", hidden_K[i]);
-        if (i != hidden_K.size() - 1) {
-          fprintf(fc, ",");
+      if (i != hidden_K.size() - 1) {
+        fprintf(fc, ",");
+      }
     }
-	}
     fclose(fc);
   } else {
     std::cout << "File cannot Open" << std::endl;
@@ -328,12 +338,11 @@ void Generate_IRM::Output_by_record_csv() {
   if ((fd = fopen("hidden_L.csv", "w")) != NULL) {
     for (int j = 0; j < hidden_L.size(); j++) {
       fprintf(fd, "%d", hidden_L[j]);
-    
-        if (j != hidden_L.size() - 1) {
 
-          fprintf(fa, ",");
-		}
-	}
+      if (j != hidden_L.size() - 1) {
+        fprintf(fa, ",");
+      }
+    }
     fclose(fd);
   } else {
     std::cout << "File cannot Open" << std::endl;
@@ -357,11 +366,11 @@ void Generate_IRM::Output_by_record_csv() {
   }
   FILE *ff;
   if ((ff = fopen("Output_size_Parameter_Relation_Matrix.csv", "w")) != NULL) {
-  
     for (int i = 0; i < Output_Binary_Relation_Matrix.size(); i++) {
       for (int j = 0; j < Output_Binary_Relation_Matrix[i].size(); j++) {
         //カンマで区切ることでCSVファイルとする
-        fprintf(ff, "%lf", Parameter_Relation_Matrix[hidden_K[i]-1][hidden_L[j]-1]);
+        fprintf(ff, "%lf",
+                Parameter_Relation_Matrix[hidden_K[i] - 1][hidden_L[j] - 1]);
         if (j != Output_Binary_Relation_Matrix[i].size() - 1) {
           fprintf(ff, ",");
         }
@@ -372,7 +381,6 @@ void Generate_IRM::Output_by_record_csv() {
   } else {
     std::cout << "File cannot Open" << std::endl;
   }
-
 }
 void Generate_IRM::show_IRM_parameter() {
   std::cout << "Generate_IRM_co_alpha" << Generate_IRM_co_alpha << std::endl;

@@ -18,8 +18,8 @@ int main(int argc, const char *argv[]) {
 
   double parameter_co_alpha = std::atoi(
       argv[1]);  //二つのCRPに共通のパラメータalpha(共通でなくてもよし)
-  double parameter_Beta_a = std::atoi(argv[2]);
-  double parameter_Beta_b = std::atoi(argv[3]);
+  double parameter_Beta_a = std::atof(argv[2]);
+  double parameter_Beta_b = std::atof(argv[3]);
   int K_number = std::atoi(argv[4]);  //比較対象Kの総数
   int L_number = std::atoi(argv[5]);  // 比較対象Lの総数
 
