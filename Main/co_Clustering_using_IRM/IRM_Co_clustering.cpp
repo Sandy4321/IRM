@@ -778,25 +778,11 @@ void IRM_Co_Clustering::Output_by_record_csv() {
   } else {
     std::cout << "File cannot Open" << std::endl;
   }
-  FILE *fa;
-  if ((fa = fopen("Parameter_Relation_Matrix.csv", "w")) != NULL) {
-    for (int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
-      for (int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
-        fprintf(fa, "%lf", Parameter_Relation_Matrix[i][j]);
-        if (j != Parameter_Relation_Matrix[i].size() - 1) {
-          fprintf(fa, ",");
-        }
-      }
-      fprintf(fa, "\n");
-    }
-    fclose(fa);
-  } else {
-    std::cout << "File cannot Open" << std::endl;
-  }
+
   FILE *fc;
   if ((fc = fopen("hidden_K.csv", "w")) != NULL) {
     for (int i = 0; i < hidden_K.size(); i++) {
-      fprintf(fc, "%d\n", hidden_K[i]);
+      fprintf(fc, "%d", hidden_K[i]);
       if (i != hidden_K.size() - 1) {
         fprintf(fc, ",");
       }
@@ -809,7 +795,7 @@ void IRM_Co_Clustering::Output_by_record_csv() {
   FILE *fd;
   if ((fd = fopen("hidden_L.csv", "w")) != NULL) {
     for (int j = 0; j < hidden_L.size(); j++) {
-      fprintf(fd, "%d\n", hidden_L[j]);
+      fprintf(fd, "%d", hidden_L[j]);
       if (j != hidden_L.size() - 1) {
         fprintf(fd, ",");
       }
@@ -819,6 +805,7 @@ void IRM_Co_Clustering::Output_by_record_csv() {
   } else {
     std::cout << "File cannot Open" << std::endl;
   }
+
   FILE *fe;
   if ((fe = fopen("number_of_k_l_in_each_cluster.csv", "w")) != NULL) {
     for (int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
@@ -833,24 +820,6 @@ void IRM_Co_Clustering::Output_by_record_csv() {
     fprintf(fe, "number_of_cluster_L==%d\n", number_of_cluster_L);
 
     fclose(fe);
-  } else {
-    std::cout << "File cannot Open" << std::endl;
-  }
-
-  FILE *ff;
-  if ((ff = fopen("Output_size_Parameter_Relation_Matrix.csv", "w")) != NULL) {
-    for (int i = 0; i < Input_Binary_Relation_Matrix.size(); i++) {
-      for (int j = 0; j < Input_Binary_Relation_Matrix[i].size(); j++) {
-        //カンマで区切ることでCSVファイルとする
-        fprintf(ff, "%lf",
-                Parameter_Relation_Matrix[hidden_K[i] - 1][hidden_L[j] - 1]);
-        if (j != Input_Binary_Relation_Matrix[i].size() - 1) {
-          fprintf(ff, ",");
-        }
-      }
-      fprintf(ff, "\n");
-    }
-    fclose(ff);
   } else {
     std::cout << "File cannot Open" << std::endl;
   }
