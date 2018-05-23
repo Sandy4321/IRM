@@ -57,5 +57,6 @@ int main(int argc, const char *argv[]) {
   IRM.Output_by_record_csv();
   double Posterior_prob;
   Posterior_prob = IRM.get_Posterior_Probability();
+  std::cout << "Posterior_prob=" << Posterior_prob << std::endl;
   return 0;
 }

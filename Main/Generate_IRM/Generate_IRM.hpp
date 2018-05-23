@@ -31,10 +31,14 @@ class Generate_IRM {
   int number_of_cluster_K;  //比較対象Kの総クラスタ数
   int number_of_cluster_L;  //比較対象Lの総クラスタ数
 
-  std::vector<int> hidden_K;  //比較対象Kの潜在系列(Kの要素の各所属クラスタ情報)
-  std::vector<int> hidden_L;  //比較対象Lの潜在系列(Lの要素の各所属クラスタ情報)
-  std::vector<int> number_of_k_in_each_cluster;  //比較対象Kの各クラスタの要素数
-  std::vector<int> number_of_l_in_each_cluster;  //比較対象Lの各クラスタの要素数
+  std::vector<unsigned int>
+      hidden_K;  //比較対象Kの潜在系列(Kの要素の各所属クラスタ情報)
+  std::vector<unsigned int>
+      hidden_L;  //比較対象Lの潜在系列(Lの要素の各所属クラスタ情報)
+  std::vector<unsigned int>
+      number_of_k_in_each_cluster;  //比較対象Kの各クラスタの要素数
+  std::vector<unsigned int>
+      number_of_l_in_each_cluster;  //比較対象Lの各クラスタの要素数
 
   std::vector<int>
       Output_Binary_Relation_k;  // 比較対象Kのk番目の要素とLの関係を表すL長vector

@@ -115,7 +115,7 @@ void Generate_IRM::
   //確実にするなら初期化してしまおう
 
   Parameter_Relation_Matrix = std::vector<std::vector<double>>(
-	//この方法だとベータ分布の入力パラメータは0.005が最小(Boost使う方にいずれ変えた方が良い)
+      //この方法だとベータ分布の入力パラメータは0.005が最小(Boost使う方にいずれ変えた方が良い)
       number_of_k_in_each_cluster.size(),
       std::vector<double>(number_of_l_in_each_cluster.size(), 0));
 
@@ -129,8 +129,8 @@ void Generate_IRM::
   std::gamma_distribution<double> g_dis_a(Generate_IRM_Beta_a, 1.0 / 1.0);
   std::gamma_distribution<double> g_dis_b(Generate_IRM_Beta_b, 1.0 / 1.0);
 
-  for (int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
-    for (int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
+  for (unsigned int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
+    for (unsigned int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
       double ga = g_dis_a(engine);
       double gb = g_dis_b(engine);
       Parameter_Relation_Matrix[i][j] = ga / (ga + gb);
@@ -162,8 +162,8 @@ void Generate_IRM::decide_Output_Binary_Relation_Matrix() {
   std::random_device seed_gen;
   std::mt19937 engine(seed_gen());
 
-  for (int i = 0; i < Output_Binary_Relation_Matrix.size(); i++) {
-    for (int j = 0; j < Output_Binary_Relation_Matrix[i].size(); j++) {
+  for (unsigned int i = 0; i < Output_Binary_Relation_Matrix.size(); i++) {
+    for (unsigned int j = 0; j < Output_Binary_Relation_Matrix[i].size(); j++) {
       double theta = 0;
       theta = Parameter_Relation_Matrix[hidden_K[i] - 1][hidden_L[j] - 1];
       std::bernoulli_distribution dist(theta);
@@ -184,21 +184,21 @@ double Generate_IRM::get_Posterior_Probability() {
 
   S1_Posterior_Probability =
       (std::pow(Generate_IRM_co_alpha, number_of_k_in_each_cluster.size()));
-  for (auto i = 0; i < number_of_k_in_each_cluster.size(); i++) {
+  for (unsigned int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
     S1_Posterior_Probability +=
         Logfactorial(number_of_k_in_each_cluster[i] - 1);
   }
-  for (auto i = 0; i < hidden_K.size(); i++) {
+  for (unsigned int i = 0; i < hidden_K.size(); i++) {
     S1_Posterior_Probability -= std::log(Generate_IRM_co_alpha + i);
   }
 
   S2_Posterior_Probability =
       std::pow(Generate_IRM_co_alpha, number_of_l_in_each_cluster.size());
-  for (auto j = 0; j < number_of_l_in_each_cluster.size(); j++) {
+  for (unsigned int j = 0; j < number_of_l_in_each_cluster.size(); j++) {
     S2_Posterior_Probability +=
         Logfactorial(number_of_l_in_each_cluster[j] - 1);
   }
-  for (auto j = 0; j < hidden_L.size(); j++) {
+  for (unsigned int j = 0; j < hidden_L.size(); j++) {
     S2_Posterior_Probability -= std::log(Generate_IRM_co_alpha + j);
   }
   /*
@@ -225,16 +225,16 @@ double Generate_IRM::get_Posterior_Probability() {
         }
       */
 
-  for (auto i = 0; i < number_of_k_in_each_cluster.size(); i++) {
-    for (auto j = 0; j < hidden_L.size(); j++) {
+  for (unsigned int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
+    for (unsigned int j = 0; j < hidden_L.size(); j++) {
       double n_full_full_i_j = 0;
       double bar_n_full_full_i_j = 0;
 
-      for (int k = 0; k < Output_Binary_Relation_Matrix.size();
+      for (unsigned int k = 0; k < Output_Binary_Relation_Matrix.size();
            k++) {  //クラスタjについてカウント
 
         if (hidden_K[k] == i + 1) {
-          for (int l = 0;
+          for (unsigned int l = 0;
                l < Output_Binary_Relation_Matrix[k].size();  // k行を調べる
                l++) {
             if (hidden_L[l] == j + 1) {
@@ -294,8 +294,9 @@ void Generate_IRM::run_Generate_IRM() {  // Generate_IRMの本体
 void Generate_IRM::Output_by_record_csv() {
   FILE *fp;
   if ((fp = fopen("Output_Binary_Relation_Matrix.csv", "w")) != NULL) {
-    for (int i = 0; i < Output_Binary_Relation_Matrix.size(); i++) {
-      for (int j = 0; j < Output_Binary_Relation_Matrix[i].size(); j++) {
+    for (unsigned int i = 0; i < Output_Binary_Relation_Matrix.size(); i++) {
+      for (unsigned int j = 0; j < Output_Binary_Relation_Matrix[i].size();
+           j++) {
         //カンマで区切ることでCSVファイルとする
         fprintf(fp, "%d", Output_Binary_Relation_Matrix[i][j]);
         if (j != Output_Binary_Relation_Matrix[i].size() - 1) {
@@ -310,8 +311,8 @@ void Generate_IRM::Output_by_record_csv() {
   }
   FILE *fa;
   if ((fa = fopen("Parameter_Relation_Matrix.csv", "w")) != NULL) {
-    for (int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
-      for (int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
+    for (unsigned int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
+      for (unsigned int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
         fprintf(fa, "%lf", Parameter_Relation_Matrix[i][j]);
         if (j != Parameter_Relation_Matrix[i].size() - 1) {
           fprintf(fa, ",");
@@ -325,7 +326,7 @@ void Generate_IRM::Output_by_record_csv() {
   }
   FILE *fc;
   if ((fc = fopen("hidden_K.csv", "w")) != NULL) {
-    for (int i = 0; i < hidden_K.size(); i++) {
+    for (unsigned int i = 0; i < hidden_K.size(); i++) {
       fprintf(fc, "%d", hidden_K[i]);
       if (i != hidden_K.size() - 1) {
         fprintf(fc, ",");
@@ -337,11 +338,11 @@ void Generate_IRM::Output_by_record_csv() {
   }
   FILE *fd;
   if ((fd = fopen("hidden_L.csv", "w")) != NULL) {
-    for (int j = 0; j < hidden_L.size(); j++) {
+    for (unsigned int j = 0; j < hidden_L.size(); j++) {
       fprintf(fd, "%d", hidden_L[j]);
 
       if (j != hidden_L.size() - 1) {
-        fprintf(fa, ",");
+        fprintf(fd, ",");
       }
     }
     fclose(fd);
@@ -350,12 +351,12 @@ void Generate_IRM::Output_by_record_csv() {
   }
   FILE *fe;
   if ((fe = fopen("number_of_k_l_in_each_cluster.csv", "w")) != NULL) {
-    for (int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
+    for (unsigned int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
       fprintf(fe, "number_of_k_in_each_cluster=%d\n",
               number_of_k_in_each_cluster[i]);
     }
     fprintf(fe, "number_of_cluster_K=%d\n", number_of_cluster_K);
-    for (int i = 0; i < number_of_l_in_each_cluster.size(); i++) {
+    for (unsigned int i = 0; i < number_of_l_in_each_cluster.size(); i++) {
       fprintf(fe, "number_of_l_in_each_cluster=%d\n",
               number_of_l_in_each_cluster[i]);
     }
@@ -367,8 +368,9 @@ void Generate_IRM::Output_by_record_csv() {
   }
   FILE *ff;
   if ((ff = fopen("Output_size_Parameter_Relation_Matrix.csv", "w")) != NULL) {
-    for (int i = 0; i < Output_Binary_Relation_Matrix.size(); i++) {
-      for (int j = 0; j < Output_Binary_Relation_Matrix[i].size(); j++) {
+    for (unsigned int i = 0; i < Output_Binary_Relation_Matrix.size(); i++) {
+      for (unsigned int j = 0; j < Output_Binary_Relation_Matrix[i].size();
+           j++) {
         //カンマで区切ることでCSVファイルとする
         fprintf(ff, "%lf",
                 Parameter_Relation_Matrix[hidden_K[i] - 1][hidden_L[j] - 1]);
@@ -384,11 +386,10 @@ void Generate_IRM::Output_by_record_csv() {
   }
   FILE *fg;
   if ((fg = fopen("Parameter_Relation_Matrix.csv", "w")) != NULL) {
-    for (int k = 0; k < Parameter_Relation_Matrix.size(); k++) {
-      for (int l = 0; l < Parameter_Relation_Matrix[k].size(); l++) {
+    for (unsigned int k = 0; k < Parameter_Relation_Matrix.size(); k++) {
+      for (unsigned int l = 0; l < Parameter_Relation_Matrix[k].size(); l++) {
         //カンマで区切ることでCSVファイルとする
-        fprintf(fg, "%lf",
-                Parameter_Relation_Matrix[k][l]);
+        fprintf(fg, "%lf", Parameter_Relation_Matrix[k][l]);
         if (l != Parameter_Relation_Matrix[k].size() - 1) {
           fprintf(fg, ",");
         }
@@ -399,7 +400,6 @@ void Generate_IRM::Output_by_record_csv() {
   } else {
     std::cout << "File cannot Open" << std::endl;
   }
-
 }
 void Generate_IRM::show_IRM_parameter() {
   std::cout << "Generate_IRM_co_alpha" << Generate_IRM_co_alpha << std::endl;
@@ -438,15 +438,15 @@ void Generate_IRM::show_datas() {
   // std::cout << "total_desk_" << std::endl;
   std::cout << "Vector系の全要素表示終了" << std::endl;
   std::cout << "Parameter_Relation_Matrix1" << std::endl;
-  for (int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
-    for (int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
+  for (unsigned int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
+    for (unsigned int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
       std::cout << Parameter_Relation_Matrix[i][j] << "  ";
     }
     std::cout << std::endl;
   }
   std::cout << "Output_Binary_Relation_Matrix" << std::endl;
-  for (int i = 0; i < Output_Binary_Relation_Matrix.size(); i++) {
-    for (int j = 0; j < Output_Binary_Relation_Matrix[i].size(); j++) {
+  for (unsigned int i = 0; i < Output_Binary_Relation_Matrix.size(); i++) {
+    for (unsigned int j = 0; j < Output_Binary_Relation_Matrix[i].size(); j++) {
       std::cout << Output_Binary_Relation_Matrix[i][j] << "  ";
     }
     std::cout << std::endl;
