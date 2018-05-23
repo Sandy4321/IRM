@@ -382,6 +382,24 @@ void Generate_IRM::Output_by_record_csv() {
   } else {
     std::cout << "File cannot Open" << std::endl;
   }
+  FILE *fg;
+  if ((fg = fopen("Parameter_Relation_Matrix.csv", "w")) != NULL) {
+    for (int k = 0; k < Parameter_Relation_Matrix.size(); k++) {
+      for (int l = 0; l < Parameter_Relation_Matrix[k].size(); l++) {
+        //カンマで区切ることでCSVファイルとする
+        fprintf(fg, "%lf",
+                Parameter_Relation_Matrix[k][l]);
+        if (l != Parameter_Relation_Matrix[k].size() - 1) {
+          fprintf(fg, ",");
+        }
+      }
+      fprintf(fg, "\n");
+    }
+    fclose(fg);
+  } else {
+    std::cout << "File cannot Open" << std::endl;
+  }
+
 }
 void Generate_IRM::show_IRM_parameter() {
   std::cout << "Generate_IRM_co_alpha" << Generate_IRM_co_alpha << std::endl;
