@@ -54,7 +54,7 @@ int main(int argc, const char *argv[]) {
   IRM.first_get_each_cluster_number();  //ここまでがCRPによる初期化
 
   // IRM.update_hidden_K();
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 2; i++) {
     IRM.update_hidden_K();
 
     // IRM.update_hidden_L();
@@ -64,5 +64,6 @@ int main(int argc, const char *argv[]) {
     std::cout << i + 1 << "回" << std::endl;
     IRM.Output_by_record_csv();
   }
+  std::cout << "Hello\n" << std::endl;
   return 0;
 }

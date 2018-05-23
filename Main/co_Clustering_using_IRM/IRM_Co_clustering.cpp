@@ -229,10 +229,10 @@ void IRM_Co_Clustering::update_hidden_K() {
     std::cout << "オリジナルのtmp_hidden_K:" << i << std::endl;
   }
 
-  for (int k = 0; k < hidden_K.size(); k++) {
+  for (unsigned int k = 0; k < hidden_K.size(); k++) {
     // tmp_hidden_Kからk番目を一つ削除
     k_iterator = k;
-    int tmp_delete_atom_k = 0;
+    unsigned int tmp_delete_atom_k = 0;
     tmp_delete_atom_k = tmp_hidden_K[k];
 
     tmp_hidden_K.erase(tmp_hidden_K.begin() + k);
@@ -300,18 +300,19 @@ int IRM_Co_Clustering::
   std::mt19937 engine(seed_gen());  //この二行はあとでfor分の外にだす
 
   std::vector<double> probability_ratio;
-  // k番目の要素の最適なクラスターを選択
-  // 新しい客の机を選択
-  std::discrete_distribution<std::size_t> cluster_dis(probability_ratio.begin(),
-                                                      probability_ratio.end());
 
-  for (int i = 0; i < tmp_number_of_k_in_each_cluster.size();
+  for (unsigned int i = 0; i < tmp_number_of_k_in_each_cluster.size();
        i++) {  //既存のクラスタを選択する確率
     int iter_i = i;
     probability_ratio.push_back(already_cluster_prob_K(iter_i));
   }
   probability_ratio.push_back(
       new_cluster_prob_K());  //新しいクラスタを選択する確率
+
+  // k番目の要素の最適なクラスターを選択
+  // 新しい客の机を選択
+  std::discrete_distribution<std::size_t> cluster_dis(probability_ratio.begin(),
+                                                      probability_ratio.end());
 
   for (const auto &i : probability_ratio) {
     std::cout << "各確率は:" << i << std::endl;
@@ -321,22 +322,23 @@ int IRM_Co_Clustering::
 }
 
 double IRM_Co_Clustering::already_cluster_prob_K(
-    int i_cluster_of_K) {  // i番目の顧客クラスターについて調べる
+    unsigned int i_cluster_of_K) {  // i番目の顧客クラスターについて調べる
 
   double already_prob_K = 1;
 
-  for (int j = 0; j < tmp_number_of_cluster_L; j++) {  //クラスタ数の数だけ実施
-    int n_full_full_i_j = 0;
-    int bar_n_full_full_i_j = 0;
-    int n_notk_full_i_j = 0;
-    int bar_n_notk_full_i_j = 0;
+  for (unsigned int j = 0; j < tmp_number_of_cluster_L;
+       j++) {  //クラスタ数の数だけ実施
+    unsigned int n_full_full_i_j = 0;
+    unsigned int bar_n_full_full_i_j = 0;
+    unsigned int n_notk_full_i_j = 0;
+    unsigned int bar_n_notk_full_i_j = 0;
 
-    int n_k_full_i_j = 0;      //今回は補助変数
-    int bar_n_k_full_i_j = 0;  //今回は補助変数
-    for (int k = 0; k < Input_Binary_Relation_Matrix.size();
+    unsigned int n_k_full_i_j = 0;      //今回は補助変数
+    unsigned int bar_n_k_full_i_j = 0;  //今回は補助変数
+    for (unsigned int k = 0; k < Input_Binary_Relation_Matrix.size();
          k++) {  //クラスタjについてカウント
       if (tmp_hidden_K[k] == i_cluster_of_K + 1) {
-        for (int l = 0;
+        for (unsigned int l = 0;
              l <
              Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
              l++) {
@@ -351,7 +353,7 @@ double IRM_Co_Clustering::already_cluster_prob_K(
         }
       }
     }
-    for (int l = 0;
+    for (unsigned int l = 0;
          l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
          l++) {
       if (tmp_hidden_L[l] == j + 1) {  //要素lがクラスタjに属しているかどうか
@@ -366,6 +368,12 @@ double IRM_Co_Clustering::already_cluster_prob_K(
     n_notk_full_i_j = n_full_full_i_j - n_k_full_i_j;
     bar_n_notk_full_i_j = bar_n_full_full_i_j - bar_n_k_full_i_j;
 
+    std::cout << "!!i_cluster_of_K:" << i_cluster_of_K << std::endl;
+
+    for (const auto &i : tmp_number_of_k_in_each_cluster) {
+      std::cout << "!!tmp_number_of_k_in_each_cluster:" << i << std::endl;
+    }
+
     already_prob_K *=
         ((double)tmp_number_of_l_in_each_cluster[i_cluster_of_K] *
          (boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
@@ -374,7 +382,7 @@ double IRM_Co_Clustering::already_cluster_prob_K(
                             IRM_Co_Clustering_Beta_b + bar_n_notk_full_i_j)));
   }
 
-  //  already_prob_K = 1;
+  // already_prob_K = 1;
   ///テスト用
 
   return already_prob_K;
@@ -382,10 +390,11 @@ double IRM_Co_Clustering::already_cluster_prob_K(
 double IRM_Co_Clustering::new_cluster_prob_K() {
   double new_prob = 1;
 
-  for (int j = 0; j < tmp_number_of_cluster_L; j++) {  //クラスタ数の数だけ実施
+  for (unsigned int j = 0; j < tmp_number_of_cluster_L;
+       j++) {  //クラスタ数の数だけ実施
     int n_k_full_i_j = 0;
     int bar_n_k_full_i_j = 0;
-    for (int l = 0;
+    for (unsigned int l = 0;
          l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
          l++) {
       if (tmp_hidden_L[l] == j + 1) {  //要素lがクラスタjに属しているかどうか
@@ -449,10 +458,10 @@ void IRM_Co_Clustering::update_hidden_L() {
     std::cout << "オリジナルのtmp_hidden_L:" << i << std::endl;
   }
 
-  for (int l = 0; l < hidden_L.size(); l++) {
+  for (unsigned int l = 0; l < hidden_L.size(); l++) {
     // tmp_hidden_Kからk番目を一つ削除
     l_iterator = l;
-    int tmp_delete_atom_l = 0;
+    unsigned int tmp_delete_atom_l = 0;
     tmp_delete_atom_l = tmp_hidden_L[l_iterator];
 
     tmp_hidden_L.erase(tmp_hidden_L.begin() + l);
@@ -524,7 +533,7 @@ int IRM_Co_Clustering::
   std::discrete_distribution<std::size_t> cluster_dis(probability_ratio.begin(),
                                                       probability_ratio.end());
 
-  for (int j = 0; j < tmp_number_of_l_in_each_cluster.size();
+  for (unsigned int j = 0; j < tmp_number_of_l_in_each_cluster.size();
        j++) {  //既存のクラスタを選択する確率
     int iter_j = j;
     probability_ratio.push_back(already_cluster_prob_L(iter_j));
@@ -540,22 +549,20 @@ int IRM_Co_Clustering::
 }
 
 double IRM_Co_Clustering::already_cluster_prob_L(
-    int j_cluster_of_L) {  // j番目の商品クラスターについて調べる
+    unsigned int j_cluster_of_L) {  // j番目の商品クラスターについて調べる
   double already_prob_L = 1;
-  
-    for (int i = 0; i < tmp_number_of_cluster_K; i++) { //クラスタ数の数だけ実施
-      int n_full_full_i_j = 0;
-      int bar_n_full_full_i_j = 0;
-      int n_not_l_full_i_j = 0;
-      int bar_n_not_l_full_i_j = 0;
+  /*
+    for (unsigned int i = 0; i < tmp_number_of_cluster_K; i++) {
+    //クラスタ数の数だけ実施 int n_full_full_i_j = 0; int bar_n_full_full_i_j =
+    0; int n_not_l_full_i_j = 0; int bar_n_not_l_full_i_j = 0;
 
       int n_l_full_i_j = 0;      //今回は補助変数
       int bar_n_l_full_i_j = 0;  //今回は補助変数
 
-      for (int k = 0; k < Input_Binary_Relation_Matrix.size();
+      for (unsigned int k = 0; k < Input_Binary_Relation_Matrix.size();
            k++) {  //クラスタjについてカウント
         if (tmp_hidden_K[k] == i + 1) {
-          for (int l = 0;
+          for (unsigned int l = 0;
                l <
                Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
                l++) {
@@ -571,14 +578,12 @@ double IRM_Co_Clustering::already_cluster_prob_L(
         }
       }
 
-      for (int k = 0; k < Input_Binary_Relation_Matrix.size();  // l列を調べる
-           k++) {
-        if (tmp_hidden_K[k] == i + 1) {  //要素kがクラスタiに属しているかどうか
-          if (Input_Binary_Relation_Matrix[k][l_iterator] ==
-              1) {  // Relation_Matrixの値が1かどうか
-            n_l_full_i_j += 1;
-          } else {
-            bar_n_l_full_i_j += 1;
+      for (unsigned int k = 0; k < Input_Binary_Relation_Matrix.size();  //
+    l列を調べる k++) { if (tmp_hidden_K[k] == i + 1) {
+    //要素kがクラスタiに属しているかどうか if
+    (Input_Binary_Relation_Matrix[k][l_iterator] == 1) {  //
+    Relation_Matrixの値が1かどうか n_l_full_i_j += 1; } else { bar_n_l_full_i_j
+    += 1;
           }
         }
       }
@@ -593,42 +598,42 @@ double IRM_Co_Clustering::already_cluster_prob_L(
                               IRM_Co_Clustering_Beta_b +
     bar_n_not_l_full_i_j)));
     }
-   
+    */
   already_prob_L = 1;
 
   return already_prob_L;
 }
 double IRM_Co_Clustering::new_cluster_prob_L() {
   double new_prob = 1;
-  
-    for (int j = 0; j < tmp_number_of_cluster_L; j++) {
-      //クラスタ数の数だけ実施
-      int n_k_full_i_j = 0;
-      int bar_n_k_full_i_j = 0;
-      for (int l = 0;
-           l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
-           l++) {
-        if (tmp_hidden_L[l] == j + 1) {
-          //要素lがクラスタjに属しているかどうか
-          if (Input_Binary_Relation_Matrix[k_iterator][l] ==
-              1) {  // Relation_Matrixの値が1かどうか
-            n_k_full_i_j += 1;
-          } else {
-            bar_n_k_full_i_j += 1;
-          }
+
+  for (unsigned int j = 0; j < tmp_number_of_cluster_L; j++) {
+    //クラスタ数の数だけ実施
+    int n_k_full_i_j = 0;
+    int bar_n_k_full_i_j = 0;
+    for (unsigned int l = 0;
+         l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
+         l++) {
+      if (tmp_hidden_L[l] == j + 1) {
+        //要素lがクラスタjに属しているかどうか
+        if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+            1) {  // Relation_Matrixの値が1かどうか
+          n_k_full_i_j += 1;
+        } else {
+          bar_n_k_full_i_j += 1;
         }
       }
-
-      new_prob *=  //
-          (IRM_Co_Clustering_co_alpha *
-           (boost::math::beta(IRM_Co_Clustering_Beta_a + n_k_full_i_j,
-                              IRM_Co_Clustering_Beta_b + bar_n_k_full_i_j)) /
-           (boost::math::beta(IRM_Co_Clustering_Beta_a,
-                              IRM_Co_Clustering_Beta_b)));
     }
 
-    // new_prob *= IRM_Co_Clustering_co_alpha;  //テスト用
-   
+    new_prob *=  //
+        (IRM_Co_Clustering_co_alpha *
+         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_k_full_i_j,
+                            IRM_Co_Clustering_Beta_b + bar_n_k_full_i_j)) /
+         (boost::math::beta(IRM_Co_Clustering_Beta_a,
+                            IRM_Co_Clustering_Beta_b)));
+  }
+
+  // new_prob *= IRM_Co_Clustering_co_alpha;  //テスト用
+
   return new_prob;
 }
 
@@ -668,37 +673,37 @@ double IRM_Co_Clustering::get_tmp_Posterior_Probability() {
   S1 = std::pow(IRM_Co_Clustering_co_alpha,
                 tmp_number_of_k_in_each_cluster.size());
   S1_Posterior_Probability = std::log(S1);
-  for (auto i = 0; i < tmp_number_of_k_in_each_cluster.size(); i++) {
+  for (unsigned int i = 0; i < tmp_number_of_k_in_each_cluster.size(); i++) {
     S1_Posterior_Probability +=
         Logfactorial(tmp_number_of_k_in_each_cluster[i] - 1);
   }
-  for (auto i = 0; i < hidden_K.size(); i++) {
+  for (unsigned int i = 0; i < hidden_K.size(); i++) {
     S1_Posterior_Probability -= std::log(IRM_Co_Clustering_co_alpha + i);
   }
 
   S2_Posterior_Probability = std::log(std::pow(
       IRM_Co_Clustering_co_alpha, tmp_number_of_l_in_each_cluster.size()));
-  for (auto j = 0; j < tmp_number_of_l_in_each_cluster.size(); j++) {
+  for (unsigned int j = 0; j < tmp_number_of_l_in_each_cluster.size(); j++) {
     S2_Posterior_Probability +=
         Logfactorial(tmp_number_of_l_in_each_cluster[j] - 1);
   }
-  for (auto j = 0; j < hidden_L.size(); j++) {
+  for (unsigned int j = 0; j < hidden_L.size(); j++) {
     S2_Posterior_Probability -= std::log(IRM_Co_Clustering_co_alpha + j);
   }
 
-  for (auto i = 0; i < tmp_number_of_k_in_each_cluster.size(); i++) {
-    for (auto j = 0; j < hidden_L.size(); j++) {
+  for (unsigned int i = 0; i < tmp_number_of_k_in_each_cluster.size(); i++) {
+    for (unsigned int j = 0; j < hidden_L.size(); j++) {
       double n_full_full_i_j = 0;
       double bar_n_full_full_i_j = 0;
 
-      for (int k = 0; k < Input_Binary_Relation_Matrix.size();
+      for (unsigned int k = 0; k < Input_Binary_Relation_Matrix.size();
            k++) {  //クラスタjについてカウント
 
         if (tmp_hidden_K[k] == i + 1) {
           // std::cout << "tmp_hidden_K[k] == i at" << tmp_hidden_K[k]
           //         << std::endl;
 
-          for (int l = 0;
+          for (unsigned int l = 0;
                l < Input_Binary_Relation_Matrix[k].size();  // k行を調べる
                l++) {
             if (tmp_hidden_L[l] == j + 1) {
@@ -754,7 +759,6 @@ double IRM_Co_Clustering::Logfactorial(
     int n) {  // boostの階乗は桁落ちしてしまうので実装しておく
   int result = 0;
   int k;
-
   for (k = 1; k <= n; k++) {
     result += std::log(k);
   }
@@ -764,8 +768,9 @@ double IRM_Co_Clustering::Logfactorial(
 void IRM_Co_Clustering::Output_by_record_csv() {
   FILE *fp;
   if ((fp = fopen("Input_Binary_Relation_Matrix.csv", "w")) != NULL) {
-    for (int i = 0; i < Input_Binary_Relation_Matrix.size(); i++) {
-      for (int j = 0; j < Input_Binary_Relation_Matrix[i].size(); j++) {
+    for (unsigned int i = 0; i < Input_Binary_Relation_Matrix.size(); i++) {
+      for (unsigned int j = 0; j < Input_Binary_Relation_Matrix[i].size();
+           j++) {
         //カンマで区切ることでCSVファイルとする
         fprintf(fp, "%d", Input_Binary_Relation_Matrix[i][j]);
         if (j != Input_Binary_Relation_Matrix[i].size() - 1) {
@@ -781,7 +786,7 @@ void IRM_Co_Clustering::Output_by_record_csv() {
 
   FILE *fc;
   if ((fc = fopen("hidden_K.csv", "w")) != NULL) {
-    for (int i = 0; i < hidden_K.size(); i++) {
+    for (unsigned int i = 0; i < hidden_K.size(); i++) {
       fprintf(fc, "%d", hidden_K[i]);
       if (i != hidden_K.size() - 1) {
         fprintf(fc, ",");
@@ -794,7 +799,7 @@ void IRM_Co_Clustering::Output_by_record_csv() {
   }
   FILE *fd;
   if ((fd = fopen("hidden_L.csv", "w")) != NULL) {
-    for (int j = 0; j < hidden_L.size(); j++) {
+    for (unsigned int j = 0; j < hidden_L.size(); j++) {
       fprintf(fd, "%d", hidden_L[j]);
       if (j != hidden_L.size() - 1) {
         fprintf(fd, ",");
@@ -808,12 +813,12 @@ void IRM_Co_Clustering::Output_by_record_csv() {
 
   FILE *fe;
   if ((fe = fopen("number_of_k_l_in_each_cluster.csv", "w")) != NULL) {
-    for (int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
+    for (unsigned int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
       fprintf(fe, "number_of_k_in_each_cluster=%d\n",
               number_of_k_in_each_cluster[i]);
     }
     fprintf(fe, "number_of_cluster_K=%d\n", number_of_cluster_K);
-    for (int i = 0; i < number_of_l_in_each_cluster.size(); i++) {
+    for (unsigned int i = 0; i < number_of_l_in_each_cluster.size(); i++) {
       fprintf(fe, "number_of_l_in_each_cluster=%d\n",
               number_of_l_in_each_cluster[i]);
     }
@@ -865,16 +870,16 @@ void IRM_Co_Clustering::show_datas() {
   std::cout << "Vector系の全要素表示終了" << std::endl;
   /*
    std::cout << "Parameter_Relation_Matrix1" << std::endl;
-   for (int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
-     for (int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
+   for (unsigned int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
+     for (unsigned int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
        std::cout << Parameter_Relation_Matrix[i][j] << "  ";
      }
      std::cout << std::endl;
    }
   */
   std::cout << "Input_Binary_Relation_Matrix" << std::endl;
-  for (int i = 0; i < Input_Binary_Relation_Matrix.size(); i++) {
-    for (int j = 0; j < Input_Binary_Relation_Matrix[i].size(); j++) {
+  for (unsigned int i = 0; i < Input_Binary_Relation_Matrix.size(); i++) {
+    for (unsigned int j = 0; j < Input_Binary_Relation_Matrix[i].size(); j++) {
       std::cout << Input_Binary_Relation_Matrix[i][j] << "  ";
     }
     std::cout << std::endl;
@@ -903,8 +908,8 @@ Beta分布で各クラスた毎のパラメータ設定
 / 1.0); std::gamma_distribution<double> g_dis_b(IRM_Co_Clustering_Beta_b, 1.0
 / 1.0);
 
-  for (int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
-    for (int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
+  for (unsigned int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
+    for (unsigned int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
       double ga = g_dis_a(engine);
       double gb = g_dis_b(engine);
       Parameter_Relation_Matrix[i][j] = ga / (ga + gb);
@@ -923,8 +928,8 @@ void IRM_Co_Clustering::decide_Output_Binary_Relation_Matrix() {
   std::random_device seed_gen;
   std::mt19937 engine(seed_gen());
 
-  for (int i = 0; i < Input_Binary_Relation_Matrix.size(); i++) {
-    for (int j = 0; j < Input_Binary_Relation_Matrix[i].size(); j++) {
+  for (unsigned int i = 0; i < Input_Binary_Relation_Matrix.size(); i++) {
+    for (unsigned int j = 0; j < Input_Binary_Relation_Matrix[i].size(); j++) {
       double theta = 0;
       theta = Parameter_Relation_Matrix[hidden_K[i] - 1][hidden_L[j] - 1];
       std::bernoulli_distribution dist(theta);

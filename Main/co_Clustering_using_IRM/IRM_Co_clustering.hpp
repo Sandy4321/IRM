@@ -36,25 +36,27 @@ class IRM_Co_Clustering {
   double Max_Posterior_Probability;
   double tmp_Posterior_Probability;
 
-  std::vector<unsigned int> hidden_K;  //比較対象Kの潜在系列(Kの要素の各所属クラスタ情報)
-  std::vector<unsigned int> hidden_L;  //比較対象Lの潜在系列(Lの要素の各所属クラスタ情報)
+  std::vector<unsigned int>
+      hidden_K;  //比較対象Kの潜在系列(Kの要素の各所属クラスタ情報)
+  std::vector<unsigned int>
+      hidden_L;  //比較対象Lの潜在系列(Lの要素の各所属クラスタ情報)
 
   std::vector<unsigned int>
       tmp_hidden_K;  //現時点での比較対象Kの潜在系列(Kの要素の各所属クラスタ情報)
   std::vector<unsigned int>
       tmp_hidden_L;  //現時点での比較対象Lの潜在系列(Lの要素の各所属クラスタ情報)
 
-  std::vector<unsigned int> number_of_k_in_each_cluster;  //比較対象Kの各クラスタの要素数
-  std::vector<unsigned int> number_of_l_in_each_cluster;  //比較対象Lの各クラスタの要素数
-  std::vector<unsigned int>
+  std::vector<int> number_of_k_in_each_cluster;  //比較対象Kの各クラスタの要素数
+  std::vector<int> number_of_l_in_each_cluster;  //比較対象Lの各クラスタの要素数
+  std::vector<int>
       tmp_number_of_k_in_each_cluster;  //比較対象Kの各クラスタの要素数
-  std::vector<unsigned int>
+  std::vector<int>
       tmp_number_of_l_in_each_cluster;  //比較対象Lの各クラスタの要素数
 
-  std::vector<unsigned int>
+  std::vector<int>
       Input_Binary_Relation_k;  // 比較対象Kのk番目の要素とLの関係を表すL長vector
 
-  std::vector<std::vector<unsigned int> >
+  std::vector<std::vector<int> >
       Input_Binary_Relation_Matrix;  // KとLの関係を表すK*Lの二次元の二値行列.IRMの学習データ
 
   std::vector<double> Parameter_Relation_k;
@@ -74,13 +76,13 @@ class IRM_Co_Clustering {
   void tmp_hidden_K_get_each_cluster_number();
   void update_hidden_K();
   int get_new_cluster_for_K();
-  double already_cluster_prob_K(int i);
+  double already_cluster_prob_K(unsigned int i);
   double new_cluster_prob_K();
 
   void tmp_hidden_L_get_each_cluster_number();
   void update_hidden_L();
   int get_new_cluster_for_L();
-  double already_cluster_prob_L(int i);
+  double already_cluster_prob_L(unsigned int i);
   double new_cluster_prob_L();
 
   void decide_update_tmp_or_not_hidden_KL();
