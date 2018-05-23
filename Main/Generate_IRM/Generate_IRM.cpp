@@ -115,6 +115,7 @@ void Generate_IRM::
   //確実にするなら初期化してしまおう
 
   Parameter_Relation_Matrix = std::vector<std::vector<double>>(
+	//この方法だとベータ分布の入力パラメータは0.005が最小(Boost使う方にいずれ変えた方が良い)
       number_of_k_in_each_cluster.size(),
       std::vector<double>(number_of_l_in_each_cluster.size(), 0));
 
@@ -133,13 +134,13 @@ void Generate_IRM::
       double ga = g_dis_a(engine);
       double gb = g_dis_b(engine);
       Parameter_Relation_Matrix[i][j] = ga / (ga + gb);
-/*
-      std::cout << "ga=" << ga << std::endl;
-      std::cout << "gb=" << gb << std::endl;
-      std::cout << "Each Parameter_Relation_Matrix[i][j]"
-                << " " << i << " " << j << " "
-                << Parameter_Relation_Matrix[i][j] << std::endl;
-*/
+      /*
+            std::cout << "ga=" << ga << std::endl;
+            std::cout << "gb=" << gb << std::endl;
+            std::cout << "Each Parameter_Relation_Matrix[i][j]"
+                      << " " << i << " " << j << " "
+                      << Parameter_Relation_Matrix[i][j] << std::endl;
+      */
     }
   }
 }
