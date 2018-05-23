@@ -54,7 +54,7 @@ int main(int argc, const char *argv[]) {
   // std::cout << "Generated" << std::endl;
   IRM.show_IRM_parameter();
   IRM.show_datas();
-  IRM.Output_by_record_csv();
+ // IRM.Output_by_record_csv();
   double Posterior_prob;
   Posterior_prob = IRM.get_Posterior_Probability();
   std::cout << "Posterior_prob=" << Posterior_prob << std::endl;
