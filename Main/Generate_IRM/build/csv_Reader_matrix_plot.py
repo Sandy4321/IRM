@@ -38,10 +38,16 @@ Output_Parameter_label_sorted_by_index = Output_Parameter_label.sort_index()
 Output_Parameter_label_sorted_by_both = Output_Parameter_label_sorted_by_index.sort_index(axis=1)
 print Output_Parameter_label_sorted_by_both
 
+plt.figure()
+sns.heatmap(Output_sorted_by_both, square=True,annot=False,cmap='Blues')
+plt.savefig('heatmap_output.png')
+#plt.show()
+plt.close('all')
+
 
 plt.figure()
-sns.heatmap(Output_Parameter_label_sorted_by_both, square=True,annot=Output_sorted_by_both,fmt='.5g',cmap='Blues')
-plt.savefig('heatmap_output.png')
+sns.heatmap(Output_Parameter_label_sorted_by_both, square=True,annot=False,cmap='Blues')
+plt.savefig('heatmap_parameter_output.png')
 #plt.show()
 plt.close('all')
 
@@ -53,14 +59,17 @@ plt.close('all')
 
 # 既存画像を読み込み
 a_png = Image.open('heatmap_output.png', 'r')
-b_png= Image.open('heatmap_parameter.png', 'r')
+b_png = Image.open('heatmap_parameter_output.png', 'r')
+c_png= Image.open('heatmap_parameter.png', 'r')
+
 
 # マージに利用する下地画像を作成する
-canvas = Image.new('RGB', (1600, 600), (255, 255, 255))
+canvas = Image.new('RGB', (4800, 1200), (255, 255, 255))
 
 # pasteで、座標（0, 0）と（0, 100）に既存画像を乗せる。
-canvas.paste(a_png.resize((800,600)), (0, 0))
-canvas.paste(b_png.resize((800,600)), (800, 0))
+canvas.paste(a_png.resize((1600,1200)), (0, 0))
+canvas.paste(b_png.resize((1600,1200)), (1600, 0))
+canvas.paste(c_png.resize((1600,1200)), (3200, 0))
 
 # 保存
 canvas.save('All_Output.png', 'PNG', quality=100, optimize=True)
