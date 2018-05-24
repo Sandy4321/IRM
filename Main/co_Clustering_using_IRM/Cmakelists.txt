@@ -14,7 +14,7 @@ message("## Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")  # デバッグ用：解
 message("## Boost_LIBRARY_DIRS: ${Boost_LIBRARY_DIRS}")  # デバッグ用：解決したパスを表示
 
 
-add_definitions("-Wall -std=c++1z") ##遺伝研では変更
+add_definitions("-g -Wall -std=c++1z") ##遺伝研では変更
 add_executable(Co_clustering_using__IRM  main_Co_clustering.cpp IRM_Co_clustering.cpp  CRP.cpp)###要変更
 
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
