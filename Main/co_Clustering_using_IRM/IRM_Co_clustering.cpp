@@ -430,12 +430,19 @@ double IRM_Co_Clustering::already_cluster_prob_K(
         }
       }
     }
+
+
+
+	/*
+already_prob_K+=(std::lgamma(IRM_Co_Clustering_Beta_a+n_full_full_i_j)+std::lgamma(IRM_Co_Clustering_Beta_b)-std::lgammma())-(std::lgamma()+std::lgamma()-std::lgammma())
+*/
     already_prob_K *=
         ((double)tmp_number_of_l_in_each_cluster[j_cluster_of_L] *
          (boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
                             IRM_Co_Clustering_Beta_b + bar_n_full_full_i_j)) /
          (boost::math::beta(IRM_Co_Clustering_Beta_a + n_notk_full_i_j,
                             IRM_Co_Clustering_Beta_b + bar_n_notk_full_i_j)));
+
   }
 
   // already_prob_K = 1;

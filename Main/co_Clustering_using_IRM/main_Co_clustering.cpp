@@ -64,7 +64,7 @@ int main(int argc, const char *argv[]) {
 
   int decide_number;
   for (unsigned int i = 0; i < gibbs_counter; i++) {
-    std::cout << i + 1 << "回" << std::endl;
+    //std::cout << i + 1 << "回" << std::endl;
     IRM.update_hidden_K();
     IRM.update_hidden_L();
     decide_number = IRM.decide_update_tmp_or_not_hidden_KL();
