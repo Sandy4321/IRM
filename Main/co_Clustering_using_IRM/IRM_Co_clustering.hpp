@@ -23,6 +23,11 @@ class IRM_Co_Clustering {
   double
       IRM_Co_Clustering_Beta_b;  // IRM_Co_Clusteringのパラメータb(Beta分布で使用)
 
+  unsigned int gibbs_counter;
+  unsigned int
+      stop_counter;  //アップデートされなかったことが連続した時の打ち切り回数
+  unsigned int not_updated_counter;  //アップデートされなかった回数
+
   unsigned int k_iterator;
   unsigned int l_iterator;
 
@@ -63,12 +68,12 @@ class IRM_Co_Clustering {
   std::vector<std::vector<double> >
       Parameter_Relation_Matrix;  // KとLの各クラスタの関係を表すnumber_of_cluster_K*number_of_cluster_Lのパラメータ行列
 
-
   std::vector<double> Trantsition_Posterior_distriibution;
-
 
  public:
   IRM_Co_Clustering();
+  void set_gibbs_counter(unsigned int i);
+  void set_stop_counter(unsigned int i);
   void Read_csv_Input_Binary_Relation_Matrix(const char *argv1);
   void set_number_of_K_L();
   void out_number_of_KL(int &tmp_K, int &tmp_L);
@@ -89,7 +94,7 @@ class IRM_Co_Clustering {
   double already_cluster_prob_L(unsigned int i);
   double new_cluster_prob_L();
 
-  void decide_update_tmp_or_not_hidden_KL();
+  int decide_update_tmp_or_not_hidden_KL();
   double get_tmp_Posterior_Probability();
   double Logfactorial(int n);
 

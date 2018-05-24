@@ -18,8 +18,9 @@
 #include "IRM_Co_clustering.hpp"
 
 int main(int argc, const char *argv[]) {
-  if (argc != 5) {
-    std::cout << "This program need file name + CRP alpha + Beta_a + Beta_b"
+  if (argc != 7) {
+    std::cout << "This program need file name + CRP alpha + Beta_a + Beta_b + "
+                 "gibbs_counter + stop_counter"
               << std::endl;
     return 0;
   }
@@ -28,6 +29,13 @@ int main(int argc, const char *argv[]) {
       argv[2]);  //二つのCRPに共通のパラメータalpha(共通でなくてもよし)
   double parameter_Beta_a = std::atof(argv[3]);
   double parameter_Beta_b = std::atof(argv[4]);
+  unsigned int gibbs_counter = std::atoi(argv[5]);
+  unsigned int stop_counter = std::atoi(argv[6]);
+
+  if (gibbs_counter < stop_counter) {
+    std::cout << "gibbs_counter should bigger than stop_counter" << std::endl;
+    return 0;
+  }
 
   IRM_Co_Clustering IRM;
 
@@ -52,13 +60,18 @@ int main(int argc, const char *argv[]) {
 
   IRM.first_set_hidden_K_L(tmp_K, tmp_L);
   IRM.first_get_each_cluster_number();  //ここまでがCRPによる初期化
+  IRM.set_stop_counter(stop_counter);
 
-  for (int i = 0; i < 10000; i++) {
-    IRM.update_hidden_K();
-
-    IRM.update_hidden_L();
-    IRM.decide_update_tmp_or_not_hidden_KL();
+  int decide_number;
+  for (unsigned int i = 0; i < gibbs_counter; i++) {
     std::cout << i + 1 << "回" << std::endl;
+    IRM.update_hidden_K();
+    IRM.update_hidden_L();
+    decide_number = IRM.decide_update_tmp_or_not_hidden_KL();
+    if (decide_number != 1) {
+      break;
+      std::cout << i + 1 << "回目に打ち切り" << std::endl;
+    }
   }
   IRM.show_IRM_parameter();
   IRM.show_datas();

@@ -16,6 +16,9 @@
 #include "IRM_Co_clustering.hpp"
 
 IRM_Co_Clustering::IRM_Co_Clustering() {
+  gibbs_counter = 0;
+  stop_counter = 0;
+  not_updated_counter = 0;
   k_iterator = 0;
   l_iterator = 0;
   IRM_Co_Clustering_co_alpha = 0;
@@ -57,6 +60,9 @@ IRM_Co_Clustering::IRM_Co_Clustering() {
 
   Trantsition_Posterior_distriibution.resize(0, 0);
 }
+
+void IRM_Co_Clustering::set_gibbs_counter(unsigned int i) { gibbs_counter = i; }
+void IRM_Co_Clustering::set_stop_counter(unsigned int i) { stop_counter = i; }
 
 void IRM_Co_Clustering::Read_csv_Input_Binary_Relation_Matrix(  // csv読み込み
     const char *argv1) {
@@ -227,14 +233,15 @@ void IRM_Co_Clustering::tmp_hidden_K_get_each_cluster_number() {
 }
 
 void IRM_Co_Clustering::update_hidden_K() {
-  for (const auto &i : tmp_hidden_K) {
-    std::cout << "オリジナルのtmp_hidden_K:" << i << std::endl;
-  }
-  for (const auto &i : tmp_number_of_k_in_each_cluster) {
-    std::cout << "オリジナルのtmp_number_of_k_in_each_cluster:" << i
-              << std::endl;
-  }
-
+  /*
+    for (const auto &i : tmp_hidden_K) {
+      std::cout << "オリジナルのtmp_hidden_K:" << i << std::endl;
+    }
+    for (const auto &i : tmp_number_of_k_in_each_cluster) {
+      std::cout << "オリジナルのtmp_number_of_k_in_each_cluster:" << i
+                << std::endl;
+    }
+  */
   for (unsigned int k = 0; k < hidden_K.size(); k++) {
     // tmp_hidden_Kからk番目を一つ削除
     k_iterator = k;
@@ -251,46 +258,52 @@ void IRM_Co_Clustering::update_hidden_K() {
     if (itr_k_search ==
         tmp_hidden_K.end()) {  // tmp_delete_atom_k
                                // を発見できなかった場合＝tmp_hidden_Kの更新
-      std::cout << "tmp_hidden_Kクラスタアップデート" << k
-                << "人目の値(添字なので人なら+1)" << std::endl;
-      std::cout << "それは値" << tmp_delete_atom_k << "より上" << std::endl;
-      for (const auto &i : tmp_hidden_K) {
-        std::cout << "アップデート前のtmp_hidden_K:" << i << std::endl;
-      }
-
+      /*
+           std::cout << "tmp_hidden_Kクラスタアップデート" << k
+                     << "人目の値(添字なので人なら+1)" << std::endl;
+           std::cout << "それは値" << tmp_delete_atom_k << "より上" <<
+         std::endl; for (const auto &i : tmp_hidden_K) { std::cout <<
+         "アップデート前のtmp_hidden_K:" << i << std::endl;
+           }
+     */
       for (auto &i : tmp_hidden_K) {
         if (i > tmp_delete_atom_k) {
           i -= 1;
         }
       }
 
-      std::cout << "そして" << std::endl;
+      /*
+            std::cout << "そして" << std::endl;
 
-      for (const auto &i : tmp_hidden_K) {
-        std::cout << "アップデート後の時の各tmp_hidden_K:" << i << std::endl;
-      }
+            for (const auto &i : tmp_hidden_K) {
+              std::cout << "アップデート後の時の各tmp_hidden_K:" << i <<
+         std::endl;
+            }
+      */
     }
     //改めてクラスター数を設定
 
     tmp_hidden_K_get_each_cluster_number();
-
-    for (const auto &i : tmp_hidden_K) {
-      std::cout << k << "番目の処理のtmp_hidden_K:" << i << std::endl;
-    }
-    for (const auto &i : tmp_number_of_k_in_each_cluster) {
-      std::cout << k << "番目の処理の各number_of_k_in_each_cluster:" << i
-                << std::endl;
-    }
-    std::cout << std::endl;
+    /*
+        for (const auto &i : tmp_hidden_K) {
+          std::cout << k << "番目の処理のtmp_hidden_K:" << i << std::endl;
+        }
+        for (const auto &i : tmp_number_of_k_in_each_cluster) {
+          std::cout << k << "番目の処理の各number_of_k_in_each_cluster:" << i
+                    << std::endl;
+        }
+        std::cout << std::endl;
+    */
 
     double chosed_new_atom = 0;
     chosed_new_atom = get_new_cluster_for_K();
-    std::cout << "クラスタ選択chosed_new_atom=" << chosed_new_atom << std::endl;
-    if (chosed_new_atom == tmp_number_of_k_in_each_cluster.size() + 1) {
-      std::cout << "新しいクラスタが選ばれた"
-                << std::endl;  //新しいクラスタが選ばれたら,,特に処理はなし??
-    }
-
+    /*
+std::cout << "クラスタ選択chosed_new_atom=" << chosed_new_atom << std::endl;
+if (chosed_new_atom == tmp_number_of_k_in_each_cluster.size() + 1) {
+  std::cout << "新しいクラスタが選ばれた"
+            << std::endl;  //新しいクラスタが選ばれたら,,特に処理はなし??
+}
+*/
     tmp_delete_atom_k = chosed_new_atom;
 
     // tmp_hidden_Kにtmp_delete_atom_を戻す
@@ -298,14 +311,16 @@ void IRM_Co_Clustering::update_hidden_K() {
                         tmp_delete_atom_k);  // tmp_delete_atom_kは変更する**
 
     tmp_hidden_K_get_each_cluster_number();
-
-    for (const auto &i : tmp_hidden_K) {
-      std::cout << k << "要素の更新後のtmp_hidden_K:" << i << std::endl;
-    }
-    for (const auto &i : tmp_number_of_k_in_each_cluster) {
-      std::cout << k << "要素の更新後のtmp_number_of_k_in_each_cluster:" << i
-                << std::endl;
-    }
+    /*
+        for (const auto &i : tmp_hidden_K) {
+          std::cout << k << "要素の更新後のtmp_hidden_K:" << i << std::endl;
+        }
+        for (const auto &i : tmp_number_of_k_in_each_cluster) {
+          std::cout << k << "要素の更新後のtmp_number_of_k_in_each_cluster:" <<
+       i
+                    << std::endl;
+        }
+            */
   }
   //更新繰り返しは上まで
   // 長さが同じか確認
@@ -334,14 +349,14 @@ int IRM_Co_Clustering::
   // 新しい客の机を選択
   std::discrete_distribution<std::size_t> cluster_dis(probability_ratio.begin(),
                                                       probability_ratio.end());
-
-  for (const auto &i : probability_ratio) {
-    std::cout << "各確率は:" << i << std::endl;
-  }
-
+  /*
+    for (const auto &i : probability_ratio) {
+      std::cout << "各確率は:" << i << std::endl;
+    }
+  */
   int chosed = 0;
   chosed = cluster_dis(engine);
-  std::cout << "chosed" << chosed << std::endl;
+  // std::cout << "chosed" << chosed << std::endl;
   return chosed + 1;  //返す値は0スタートだけど机は1スタートなので
 }
 
@@ -498,14 +513,6 @@ void IRM_Co_Clustering::update_hidden_L() {
   // tmp_hidden_Lに戻す
   // 長さが同じか確認
   //
-  for (const auto &i : tmp_hidden_L) {
-    std::cout << "オリジナルのtmp_hidden_L:" << i << std::endl;
-  }
-  for (const auto &i : tmp_number_of_l_in_each_cluster) {
-    std::cout << "オリジナルのtmp_number_of_l_in_each_cluster:" << i
-              << std::endl;
-  }
-
   for (unsigned int l = 0; l < hidden_L.size(); l++) {
     // tmp_hidden_Kからk番目を一つ削除
     l_iterator = l;
@@ -522,42 +529,18 @@ void IRM_Co_Clustering::update_hidden_L() {
     if (itr_l_search ==
         tmp_hidden_L.end()) {  // tmp_delete_atom_l
                                // を発見できなかった場合＝tmp_hidden_Lの更新
-      std::cout << "tmp_hidden_Lクラスタアップデート" << l
-                << "人目の値(添字なので人なら+1)" << std::endl;
-      std::cout << "それは値" << tmp_delete_atom_l << "より上" << std::endl;
-      for (const auto &i : tmp_hidden_L) {
-        std::cout << "アップデート前のtmp_hidden_L:" << i << std::endl;
-      }
 
       for (auto &i : tmp_hidden_L) {
         if (i > tmp_delete_atom_l) {
           i -= 1;
         }
       }
-
-      std::cout << "そして" << std::endl;
-
-      for (const auto &i : tmp_hidden_L) {
-        std::cout << "アップデート後の時の各tmp_hidden_L:" << i << std::endl;
-      }
     }
     //改めてクラスター数を設定
 
     tmp_hidden_L_get_each_cluster_number();
-    for (const auto &i : tmp_number_of_l_in_each_cluster) {
-      std::cout << l << "番目の処理の各number_of_l_in_each_cluster:" << i
-                << std::endl;
-    }
-    std::cout << std::endl;
-
     double chosed_new_atom = 0;
     chosed_new_atom = get_new_cluster_for_L();
-    std::cout << "クラスタ選択chosed_new_atom=" << chosed_new_atom << std::endl;
-    if (chosed_new_atom == tmp_number_of_l_in_each_cluster.size() + 1) {
-      std::cout << "新しいクラスタが選ばれた"
-                << std::endl;  //新しいクラスタが選ばれたら,,特に処理はなし??
-    }
-
     tmp_delete_atom_l = chosed_new_atom;
 
     // tmp_hidden_Kにtmp_delete_atom_を戻す
@@ -565,14 +548,6 @@ void IRM_Co_Clustering::update_hidden_L() {
                         tmp_delete_atom_l);  // tmp_delete_atom_kは変更する**
 
     tmp_hidden_L_get_each_cluster_number();
-
-    for (const auto &i : tmp_hidden_L) {
-      std::cout << l << "要素の更新後のtmp_hidden_L:" << i << std::endl;
-    }
-    for (const auto &i : tmp_number_of_l_in_each_cluster) {
-      std::cout << l << "要素の更新後のtmp_number_of_l_in_each_cluster:" << i
-                << std::endl;
-    }
   }
 
   // 長さが同じか確認
@@ -597,16 +572,17 @@ int IRM_Co_Clustering::
   probability_ratio.push_back(
       new_cluster_prob_L());  //新しいクラスタを選択する確率
 
+  /*
   for (const auto &i : probability_ratio) {
     std::cout << "Lの各確率は:" << i << std::endl;
   }
-
+*/
   int chosed = 0;
   // l番目の要素の最適なクラスターを選択
   std::discrete_distribution<std::size_t> cluster_dis_l(
       probability_ratio.begin(), probability_ratio.end());
   chosed = cluster_dis_l(engine);
-  std::cout << "chosed" << chosed << std::endl;
+  // std::cout << "chosed" << chosed << std::endl;
   return chosed + 1;  //返す値は0スタートだけど机は1スタートなので
 
   //  return cluster_dis(engine) + 1;
@@ -692,6 +668,7 @@ double IRM_Co_Clustering::already_cluster_prob_L(
 
   return already_prob_L;
 }
+
 double IRM_Co_Clustering::new_cluster_prob_L() {
   double new_prob = 1;
 
@@ -729,7 +706,7 @@ double IRM_Co_Clustering::new_cluster_prob_L() {
 
 //完成したtmp_K_hiddenとtmp_hidden_Lを用いて事後確率計算
 // tmp_hidden_Kにhidden_Kをアップデートするか判定して更新かそのままにする
-void IRM_Co_Clustering::decide_update_tmp_or_not_hidden_KL() {
+int IRM_Co_Clustering::decide_update_tmp_or_not_hidden_KL() {
   if (tmp_hidden_K.size() != hidden_K.size()) {  //更新そもそもして大丈夫か確認
     std::cout << "Error!!tmp_hidden_Kとhidden_Kの長さが違う";
   }
@@ -744,15 +721,25 @@ void IRM_Co_Clustering::decide_update_tmp_or_not_hidden_KL() {
     std::copy(tmp_hidden_K.begin(), tmp_hidden_K.end(), hidden_K.begin());
     std::copy(tmp_hidden_L.begin(), tmp_hidden_L.end(), hidden_L.begin());
     first_get_each_cluster_number();  //クラスタ関連の数を初期化して更新*****要check
-    std::cout << "hidden_KL is Updated!!Max_Posterior_Probability="
-              << Max_Posterior_Probability << std::endl;
+    //  std::cout << "hidden_KL is Updated!!Max_Posterior_Probability="
+    //           << Max_Posterior_Probability << std::endl;
+    not_updated_counter = 0;
+  } else if (tmp_Posterior_Probability == Max_Posterior_Probability) {
+    not_updated_counter += 1;
+
   } else {
-    std::cout << "hidden_K_L is Not_Updated!!Max_Posterior_Probability="
-              << Max_Posterior_Probability << std::endl;
+    not_updated_counter += 1;
+
+    //  std::cout << "hidden_K_L is Not_Updated!!Max_Posterior_Probability="
+    //           << Max_Posterior_Probability << std::endl;
   }
   //続行するか終わるかの処理
-
   Trantsition_Posterior_distriibution.push_back(Max_Posterior_Probability);
+  if (not_updated_counter > stop_counter) {
+    return 0;
+  }
+
+  return 1;  //継続では1を返す
 }
 
 double IRM_Co_Clustering::get_tmp_Posterior_Probability() {
@@ -837,18 +824,19 @@ double IRM_Co_Clustering::get_tmp_Posterior_Probability() {
       */
     }
   }
-
-  std::cout << "S1_Posterior_Probability=" << S1_Posterior_Probability
-            << std::endl;
-  std::cout << "S2_Posterior_Probability=" << S2_Posterior_Probability
-            << std::endl;
-  std::cout << "S3_Posterior_Probability=" << S3_Posterior_Probability
-            << std::endl;
-
+  /*
+    std::cout << "S1_Posterior_Probability=" << S1_Posterior_Probability
+              << std::endl;
+    std::cout << "S2_Posterior_Probability=" << S2_Posterior_Probability
+              << std::endl;
+    std::cout << "S3_Posterior_Probability=" << S3_Posterior_Probability
+              << std::endl;
+  */
   Posterior_Probability = S1_Posterior_Probability + S2_Posterior_Probability +
                           S3_Posterior_Probability;
 
-  std::cout << "Posterior_Probability=" << Posterior_Probability << std::endl;
+  // std::cout << "Posterior_Probability=" << Posterior_Probability <<
+  // std::endl;
   return Posterior_Probability;
 }
 
@@ -927,7 +915,8 @@ void IRM_Co_Clustering::Output_by_record_csv() {
   }
   FILE *ff;
   if ((ff = fopen("Trantsition_Posterior_distriibution.csv", "w")) != NULL) {
-    for (unsigned int n = 0; n < Trantsition_Posterior_distriibution.size(); n++) {
+    for (unsigned int n = 0; n < Trantsition_Posterior_distriibution.size();
+         n++) {
       fprintf(ff, "%lf", Trantsition_Posterior_distriibution[n]);
       if (n != Trantsition_Posterior_distriibution.size() - 1) {
         fprintf(ff, ",");
@@ -938,7 +927,6 @@ void IRM_Co_Clustering::Output_by_record_csv() {
   } else {
     std::cout << "File cannot Open" << std::endl;
   }
-
 }
 
 void IRM_Co_Clustering::show_IRM_parameter() {
@@ -996,59 +984,3 @@ void IRM_Co_Clustering::show_datas() {
     std::cout << std::endl;
   }
 }
-
-/*
-void IRM_Co_Clustering::
-    Set_Parameter_Relation_Matrix_Beta() {  //
-Beta分布で各クラスた毎のパラメータ設定
-
-  //確実にするなら初期化してしまおう
-
-  Parameter_Relation_Matrix = std::vector<std::vector<double>>(
-      number_of_k_in_each_cluster.size(),
-      std::vector<double>(number_of_l_in_each_cluster.size(), 0));
-
-  Parameter_Relation_Matrix.shrink_to_fit();
-
-  // Parameter_Relation_k.resize(number_of_cluster_L,0))
-  std::random_device seed_gen;
-  //乱数部分はあとでもっとglobalに纏められそう
-  // auto engine = std::mt19937(seed_gen());
-  std::mt19937 engine(seed_gen());
-  std::gamma_distribution<double> g_dis_a(IRM_Co_Clustering_Beta_a, 1.0
-/ 1.0); std::gamma_distribution<double> g_dis_b(IRM_Co_Clustering_Beta_b, 1.0
-/ 1.0);
-
-  for (unsigned int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
-    for (unsigned int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
-      double ga = g_dis_a(engine);
-      double gb = g_dis_b(engine);
-      Parameter_Relation_Matrix[i][j] = ga / (ga + gb);
-    }
-  }
-}
-
-void IRM_Co_Clustering::decide_Output_Binary_Relation_Matrix() {
-  //各Relation_Matrixをベルヌーイ分布から決定
-  Input_Binary_Relation_Matrix = std::vector<std::vector<int>>(
-      hidden_K.size(), std::vector<int>(hidden_L.size(), 0));
-
-
-  Parameter_Relation_Matrix.shrink_to_fit();
-
-  std::random_device seed_gen;
-  std::mt19937 engine(seed_gen());
-
-  for (unsigned int i = 0; i < Input_Binary_Relation_Matrix.size(); i++) {
-    for (unsigned int j = 0; j < Input_Binary_Relation_Matrix[i].size(); j++) {
-      double theta = 0;
-      theta = Parameter_Relation_Matrix[hidden_K[i] - 1][hidden_L[j] - 1];
-      std::bernoulli_distribution dist(theta);
-      Input_Binary_Relation_Matrix[i][j] = dist(engine);
-    }
-  }
-}
-
-void IRM_Co_Clustering::run_IRM_Co_Clustering() {  // IRM_Co_Clusteringの本体
-}
-*/
