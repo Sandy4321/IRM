@@ -264,8 +264,9 @@ void IRM_Co_Clustering::update_hidden_K() {
         std::cout << "アップデート後の時の各tmp_hidden_K:" << i << std::endl;
       }
     }
+    //改めてクラスター数を設定
 
-    tmp_hidden_K_get_each_cluster_number();  //改めてクラスター数を設定
+    tmp_hidden_K_get_each_cluster_number();
     for (const auto &i : tmp_number_of_k_in_each_cluster) {
       std::cout << k << "番目の処理の各number_of_k_in_each_cluster:" << i
                 << std::endl;
@@ -322,12 +323,14 @@ int IRM_Co_Clustering::
 }
 
 double IRM_Co_Clustering::already_cluster_prob_K(
-    unsigned int i_cluster_of_K) {  // i番目の顧客クラスターについて調べる
+    unsigned int i_cluster_of_K) {  // i番目の顧客クラスターの確率について調べる
 
   double already_prob_K = 1;
 
-  for (unsigned int j = 0; j < tmp_number_of_cluster_L;
-       j++) {  //クラスタ数の数だけ実施
+  for (unsigned int j_cluster_of_L = 0;
+       j_cluster_of_L < tmp_number_of_cluster_L;
+       j_cluster_of_L++) {  // Lのクラスタ数の数だけ積を実施
+
     unsigned int n_full_full_i_j = 0;
     unsigned int bar_n_full_full_i_j = 0;
     unsigned int n_notk_full_i_j = 0;
@@ -337,45 +340,83 @@ double IRM_Co_Clustering::already_cluster_prob_K(
     unsigned int bar_n_k_full_i_j = 0;  //今回は補助変数
     for (unsigned int k = 0; k < Input_Binary_Relation_Matrix.size();
          k++) {  //クラスタjについてカウント
-      if (tmp_hidden_K[k] == i_cluster_of_K + 1) {
-        for (unsigned int l = 0;
-             l <
-             Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
-             l++) {
-          if (tmp_hidden_L[l] == j + 1) {
+      for (
+          unsigned int l = 0;
+          l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
+          l++) {  // tmp_hidden_Kは長さがK-1長なので場合分けの必要(tmp_hidden_Kのアップデート中のため)//tmp_hidden_LはL長
+        if (k < k_iterator) {
+          if (tmp_hidden_K[k] == i_cluster_of_K + 1) {
+            // //デバッグ対象その1
+
+            if (tmp_hidden_L[l] == j_cluster_of_L + 1) {
+              if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+                  1) {  // Relation_Matrixの値が1かどうか
+                n_full_full_i_j += 1;
+                n_notk_full_i_j += 1;
+              } else {
+                bar_n_full_full_i_j += 1;
+                bar_n_notk_full_i_j += 1;
+              }
+            }
+          }
+        } else if (k == k_iterator) {  // k行目について調べるとき
+          if (tmp_hidden_L[l] ==
+              j_cluster_of_L + 1) {  //要素lがクラスタjに属しているかどうか
             if (Input_Binary_Relation_Matrix[k_iterator][l] ==
                 1) {  // Relation_Matrixの値が1かどうか
+              n_k_full_i_j += 1;
               n_full_full_i_j += 1;
+
             } else {
+              bar_n_k_full_i_j += 1;
               bar_n_full_full_i_j += 1;
+            }
+          }
+
+        } else if (k > k_iterator) {
+          if (tmp_hidden_K[k - 1] == i_cluster_of_K + 1) {
+            // //デバッグ対象その1
+
+            if (tmp_hidden_L[l] == j_cluster_of_L + 1) {
+              if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+                  1) {  // Relation_Matrixの値が1かどうか
+                n_full_full_i_j += 1;
+                n_notk_full_i_j += 1;
+
+              } else {
+                bar_n_full_full_i_j += 1;
+                bar_n_notk_full_i_j += 1;
+              }
             }
           }
         }
       }
     }
-    for (unsigned int l = 0;
-         l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
-         l++) {
-      if (tmp_hidden_L[l] == j + 1) {  //要素lがクラスタjに属しているかどうか
-        if (Input_Binary_Relation_Matrix[k_iterator][l] ==
-            1) {  // Relation_Matrixの値が1かどうか
-          n_k_full_i_j += 1;
-        } else {
-          bar_n_k_full_i_j += 1;
+    /*
+        for (unsigned int l = 0;
+             l < Input_Binary_Relation_Matrix[k_iterator].size();  //
+       k行を調べる l++) { if (tmp_hidden_L[l] == j_cluster_of_L + 1) {
+       //要素lがクラスタjに属しているかどうか if
+       (Input_Binary_Relation_Matrix[k_iterator][l] == 1) {  //
+       Relation_Matrixの値が1かどうか n_k_full_i_j += 1; } else {
+              bar_n_k_full_i_j += 1;
+            }
+          }
+       }
+    */
+    /*
+        n_notk_full_i_j = n_full_full_i_j - n_k_full_i_j;
+        bar_n_notk_full_i_j = bar_n_full_full_i_j - bar_n_k_full_i_j;
+            */
+    /*
+        std::cout << "!!j_cluster_of_L:" << j_cluster_of_L << std::endl;
+
+        for (const auto &i : tmp_number_of_l_in_each_cluster) {
+          std::cout << "!!tmp_number_of_l_in_each_cluster:" << i << std::endl;
         }
-      }
-    }
-    n_notk_full_i_j = n_full_full_i_j - n_k_full_i_j;
-    bar_n_notk_full_i_j = bar_n_full_full_i_j - bar_n_k_full_i_j;
-
-    std::cout << "!!i_cluster_of_K:" << i_cluster_of_K << std::endl;
-
-    for (const auto &i : tmp_number_of_k_in_each_cluster) {
-      std::cout << "!!tmp_number_of_k_in_each_cluster:" << i << std::endl;
-    }
-
+    */
     already_prob_K *=
-        ((double)tmp_number_of_l_in_each_cluster[i_cluster_of_K] *
+        ((double)tmp_number_of_l_in_each_cluster[j_cluster_of_L] *
          (boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
                             IRM_Co_Clustering_Beta_b + bar_n_full_full_i_j)) /
          (boost::math::beta(IRM_Co_Clustering_Beta_a + n_notk_full_i_j,
