@@ -183,7 +183,9 @@ double Generate_IRM::get_Posterior_Probability() {
   double S3_Posterior_Probability = 0;
 
   S1_Posterior_Probability =
-      (std::pow(Generate_IRM_co_alpha, number_of_k_in_each_cluster.size()));
+      number_of_k_in_each_cluster.size() * (std::log(Generate_IRM_co_alpha)) -
+      (Logfactorial(number_of_k_in_each_cluster.size()));
+
   for (unsigned int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
     S1_Posterior_Probability +=
         Logfactorial(number_of_k_in_each_cluster[i] - 1);
@@ -193,14 +195,17 @@ double Generate_IRM::get_Posterior_Probability() {
   }
 
   S2_Posterior_Probability =
-      std::pow(Generate_IRM_co_alpha, number_of_l_in_each_cluster.size());
-  for (unsigned int j = 0; j < number_of_l_in_each_cluster.size(); j++) {
+      number_of_l_in_each_cluster.size() * (std::log(Generate_IRM_co_alpha)) -
+      (Logfactorial(number_of_l_in_each_cluster.size()));
+
+  for (unsigned int i = 0; i < number_of_l_in_each_cluster.size(); i++) {
     S2_Posterior_Probability +=
-        Logfactorial(number_of_l_in_each_cluster[j] - 1);
+        Logfactorial(number_of_l_in_each_cluster[i] - 1);
   }
-  for (unsigned int j = 0; j < hidden_L.size(); j++) {
-    S2_Posterior_Probability -= std::log(Generate_IRM_co_alpha + j);
+  for (unsigned int i = 0; i < hidden_L.size(); i++) {
+    S2_Posterior_Probability -= std::log(Generate_IRM_co_alpha + i);
   }
+
   /*
         S1_Posterior_Probability =
             (std::pow(Generate_IRM_co_alpha,
@@ -248,13 +253,14 @@ double Generate_IRM::get_Posterior_Probability() {
           }
         }
       }
+
       S3_Posterior_Probability +=
-          std::lgamma(Generate_IRM_Beta_a + Generate_IRM_Beta_b) -
-          std::lgamma(Generate_IRM_Beta_a) - std::lgamma(Generate_IRM_Beta_b) -
-          std::lgamma(Generate_IRM_Beta_a + n_full_full_i_j +
-                      Generate_IRM_Beta_b + bar_n_full_full_i_j) -
-          std::lgamma(Generate_IRM_Beta_a + n_full_full_i_j) -
-          std::lgamma(Generate_IRM_Beta_b + bar_n_full_full_i_j);
+          (std::lgamma(Generate_IRM_Beta_a + n_full_full_i_j) +
+           std::lgamma(Generate_IRM_Beta_b + bar_n_full_full_i_j) -
+           std::lgamma(Generate_IRM_Beta_a + n_full_full_i_j +
+                       Generate_IRM_Beta_b + bar_n_full_full_i_j)) -
+          (std::lgamma(Generate_IRM_Beta_a) + std::lgamma(Generate_IRM_Beta_b) -
+           std::lgamma(Generate_IRM_Beta_a + Generate_IRM_Beta_b));
 /*
           (boost::math::beta(Generate_IRM_Beta_a, Generate_IRM_Beta_b)) 
           (boost::math::beta(Generate_IRM_Beta_a + n_full_full_i_j,
