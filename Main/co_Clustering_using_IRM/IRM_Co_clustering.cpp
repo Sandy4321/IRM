@@ -392,29 +392,6 @@ double IRM_Co_Clustering::already_cluster_prob_K(
         }
       }
     }
-    /*
-        for (unsigned int l = 0;
-             l < Input_Binary_Relation_Matrix[k_iterator].size();  //
-       k行を調べる l++) { if (tmp_hidden_L[l] == j_cluster_of_L + 1) {
-       //要素lがクラスタjに属しているかどうか if
-       (Input_Binary_Relation_Matrix[k_iterator][l] == 1) {  //
-       Relation_Matrixの値が1かどうか n_k_full_i_j += 1; } else {
-              bar_n_k_full_i_j += 1;
-            }
-          }
-       }
-    */
-    /*
-        n_notk_full_i_j = n_full_full_i_j - n_k_full_i_j;
-        bar_n_notk_full_i_j = bar_n_full_full_i_j - bar_n_k_full_i_j;
-            */
-    /*
-        std::cout << "!!j_cluster_of_L:" << j_cluster_of_L << std::endl;
-
-        for (const auto &i : tmp_number_of_l_in_each_cluster) {
-          std::cout << "!!tmp_number_of_l_in_each_cluster:" << i << std::endl;
-        }
-    */
     already_prob_K *=
         ((double)tmp_number_of_l_in_each_cluster[j_cluster_of_L] *
          (boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
@@ -431,14 +408,16 @@ double IRM_Co_Clustering::already_cluster_prob_K(
 double IRM_Co_Clustering::new_cluster_prob_K() {
   double new_prob = 1;
 
-  for (unsigned int j = 0; j < tmp_number_of_cluster_L;
-       j++) {  //クラスタ数の数だけ実施
+  for (unsigned int j_cluster_of_L = 0;
+       j_cluster_of_L < tmp_number_of_cluster_L;
+       j_cluster_of_L++) {  //クラスタ数の数だけ実施
     int n_k_full_i_j = 0;
     int bar_n_k_full_i_j = 0;
     for (unsigned int l = 0;
          l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
          l++) {
-      if (tmp_hidden_L[l] == j + 1) {  //要素lがクラスタjに属しているかどうか
+      if (tmp_hidden_L[l] ==
+          j_cluster_of_L + 1) {  //要素lがクラスタjに属しているかどうか
         if (Input_Binary_Relation_Matrix[k_iterator][l] ==
             1) {  // Relation_Matrixの値が1かどうか
           n_k_full_i_j += 1;
@@ -592,83 +571,108 @@ int IRM_Co_Clustering::
 double IRM_Co_Clustering::already_cluster_prob_L(
     unsigned int j_cluster_of_L) {  // j番目の商品クラスターについて調べる
   double already_prob_L = 1;
-  /*
-    for (unsigned int i = 0; i < tmp_number_of_cluster_K; i++) {
-    //クラスタ数の数だけ実施 int n_full_full_i_j = 0; int bar_n_full_full_i_j =
-    0; int n_not_l_full_i_j = 0; int bar_n_not_l_full_i_j = 0;
+  for (unsigned int i_cluster_of_K = 0;
+       i_cluster_of_K < tmp_number_of_cluster_K;
+       i_cluster_of_K++) {  // Lのクラスタ数の数だけ積を実施
 
-      int n_l_full_i_j = 0;      //今回は補助変数
-      int bar_n_l_full_i_j = 0;  //今回は補助変数
+    unsigned int n_full_full_i_j = 0;
+    unsigned int bar_n_full_full_i_j = 0;
+    unsigned int n_notl_full_i_j = 0;
+    unsigned int bar_n_notl_full_i_j = 0;
 
-      for (unsigned int k = 0; k < Input_Binary_Relation_Matrix.size();
-           k++) {  //クラスタjについてカウント
-        if (tmp_hidden_K[k] == i + 1) {
-          for (unsigned int l = 0;
-               l <
-               Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
-               l++) {
-            if (tmp_hidden_L[l] == j_cluster_of_L + 1) {
-              if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+    unsigned int n_l_full_i_j = 0;      //今回は補助変数
+    unsigned int bar_n_l_full_i_j = 0;  //今回は補助変数
+    for (unsigned int l = 0;
+         l < Input_Binary_Relation_Matrix[l_iterator].size();
+         l++) {  //クラスタjについてカウント
+      for (
+          unsigned int k = 0;
+          k < Input_Binary_Relation_Matrix.size();  // l列を調べる
+          k++) {  // tmp_hidden_Lは長さがL-1長なので場合分けの必要(tmp_hidden_Lのアップデート中のため)//tmp_hidden_KはK長
+        if (l < l_iterator) {
+          if (tmp_hidden_L[l] == j_cluster_of_L + 1) {
+            // //デバッグ対象その1
+
+            if (tmp_hidden_K[k] == i_cluster_of_K + 1) {
+              if (Input_Binary_Relation_Matrix[k][l_iterator] ==
                   1) {  // Relation_Matrixの値が1かどうか
                 n_full_full_i_j += 1;
+                n_notl_full_i_j += 1;
               } else {
                 bar_n_full_full_i_j += 1;
+                bar_n_notl_full_i_j += 1;
+              }
+            }
+          }
+        } else if (l == l_iterator) {  // k行目について調べるとき
+          if (tmp_hidden_K[k] ==
+              i_cluster_of_K + 1) {  //要素lがクラスタjに属しているかどうか
+            if (Input_Binary_Relation_Matrix[k][l_iterator] ==
+                1) {  // Relation_Matrixの値が1かどうか
+              n_l_full_i_j += 1;
+              n_full_full_i_j += 1;
+
+            } else {
+              bar_n_l_full_i_j += 1;
+              bar_n_full_full_i_j += 1;
+            }
+          }
+
+        } else if (l > l_iterator) {
+          if (tmp_hidden_L[l - 1] == j_cluster_of_L + 1) {
+            // //デバッグ対象その1
+
+            if (tmp_hidden_K[k] == i_cluster_of_K + 1) {
+              if (Input_Binary_Relation_Matrix[k][l_iterator] ==
+                  1) {  // Relation_Matrixの値が1かどうか
+                n_full_full_i_j += 1;
+                n_notl_full_i_j += 1;
+
+              } else {
+                bar_n_full_full_i_j += 1;
+                bar_n_notl_full_i_j += 1;
               }
             }
           }
         }
       }
-
-      for (unsigned int k = 0; k < Input_Binary_Relation_Matrix.size();  //
-    l列を調べる k++) { if (tmp_hidden_K[k] == i + 1) {
-    //要素kがクラスタiに属しているかどうか if
-    (Input_Binary_Relation_Matrix[k][l_iterator] == 1) {  //
-    Relation_Matrixの値が1かどうか n_l_full_i_j += 1; } else { bar_n_l_full_i_j
-    += 1;
-          }
-        }
-      }
-      n_not_l_full_i_j = n_full_full_i_j - n_l_full_i_j;
-      bar_n_not_l_full_i_j = bar_n_full_full_i_j - bar_n_l_full_i_j;
-
-      already_prob_L *=
-          ((double)tmp_number_of_l_in_each_cluster[j_cluster_of_L] *
-           (boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
-                              IRM_Co_Clustering_Beta_b + bar_n_full_full_i_j)) /
-           (boost::math::beta(IRM_Co_Clustering_Beta_a + n_not_l_full_i_j,
-                              IRM_Co_Clustering_Beta_b +
-    bar_n_not_l_full_i_j)));
     }
-    */
-  already_prob_L = 1;
+    already_prob_L *=
+        ((double)tmp_number_of_k_in_each_cluster[i_cluster_of_K] *
+         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
+                            IRM_Co_Clustering_Beta_b + bar_n_full_full_i_j)) /
+         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_notl_full_i_j,
+                            IRM_Co_Clustering_Beta_b + bar_n_notl_full_i_j)));
+  }
 
   return already_prob_L;
 }
 double IRM_Co_Clustering::new_cluster_prob_L() {
   double new_prob = 1;
 
-  for (unsigned int j = 0; j < tmp_number_of_cluster_L; j++) {
+  for (unsigned int i_cluster_of_K = 0;
+       i_cluster_of_K < tmp_number_of_cluster_K; i_cluster_of_K++) {
     //クラスタ数の数だけ実施
-    int n_k_full_i_j = 0;
-    int bar_n_k_full_i_j = 0;
-    for (unsigned int l = 0;
-         l < Input_Binary_Relation_Matrix[k_iterator].size();  // k行を調べる
-         l++) {
-      if (tmp_hidden_L[l] == j + 1) {
+    int n_l_full_i_j = 0;
+    int bar_n_l_full_i_j = 0;
+    for (unsigned int k = 0;
+         k < Input_Binary_Relation_Matrix.size();  // k行を調べる
+         k++) {
+      if (tmp_hidden_K[k] == i_cluster_of_K + 1) {
         //要素lがクラスタjに属しているかどうか
-        if (Input_Binary_Relation_Matrix[k_iterator][l] ==
+        if (Input_Binary_Relation_Matrix[k][l_iterator] ==
             1) {  // Relation_Matrixの値が1かどうか
-          n_k_full_i_j += 1;
+          n_l_full_i_j += 1;
         } else {
-          bar_n_k_full_i_j += 1;
+          bar_n_l_full_i_j += 1;
         }
       }
     }
 
     new_prob *=  //
         (IRM_Co_Clustering_co_alpha *
-         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_k_full_i_j,
-                            IRM_Co_Clustering_Beta_b + bar_n_k_full_i_j)) /
+         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_l_full_i_j,
+                            IRM_Co_Clustering_Beta_b + bar_n_l_full_i_j)) /
          (boost::math::beta(IRM_Co_Clustering_Beta_a,
                             IRM_Co_Clustering_Beta_b)));
   }

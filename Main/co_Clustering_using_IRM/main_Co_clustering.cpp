@@ -53,11 +53,10 @@ int main(int argc, const char *argv[]) {
   IRM.first_set_hidden_K_L(tmp_K, tmp_L);
   IRM.first_get_each_cluster_number();  //ここまでがCRPによる初期化
 
-  // IRM.update_hidden_K();
   for (int i = 0; i < 2; i++) {
     IRM.update_hidden_K();
 
-    // IRM.update_hidden_L();
+    IRM.update_hidden_L();
     IRM.decide_update_tmp_or_not_hidden_KL();
     IRM.show_IRM_parameter();
     IRM.show_datas();
