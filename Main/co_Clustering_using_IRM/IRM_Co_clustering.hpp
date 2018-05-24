@@ -63,6 +63,10 @@ class IRM_Co_Clustering {
   std::vector<std::vector<double> >
       Parameter_Relation_Matrix;  // KとLの各クラスタの関係を表すnumber_of_cluster_K*number_of_cluster_Lのパラメータ行列
 
+
+  std::vector<double> Trantsition_Posterior_distriibution;
+
+
  public:
   IRM_Co_Clustering();
   void Read_csv_Input_Binary_Relation_Matrix(const char *argv1);
