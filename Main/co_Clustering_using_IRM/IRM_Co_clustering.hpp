@@ -98,6 +98,7 @@ class IRM_Co_Clustering {
   double get_tmp_Posterior_Probability();
   double Logfactorial(int n);
 
+  void Get_Parameter_Matrix();
   void Output_by_record_csv();
 
   void show_IRM_parameter();

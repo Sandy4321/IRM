@@ -349,14 +349,14 @@ int IRM_Co_Clustering::
   // 新しい客の机を選択
   std::discrete_distribution<std::size_t> cluster_dis(probability_ratio.begin(),
                                                       probability_ratio.end());
-  /*
-    for (const auto &i : probability_ratio) {
-      std::cout << "各確率は:" << i << std::endl;
-    }
-  */
+/*
+  for (const auto &i : probability_ratio) {
+    std::cout << "Kの各確率は:" << i << std::endl;
+  }
+*/
   int chosed = 0;
   chosed = cluster_dis(engine);
-  // std::cout << "chosed" << chosed << std::endl;
+//  std::cout << "chosed" << chosed << std::endl;
   return chosed + 1;  //返す値は0スタートだけど机は1スタートなので
 }
 
@@ -431,21 +431,17 @@ double IRM_Co_Clustering::already_cluster_prob_K(
       }
     }
 
-
-
-	/*
+    /*
 already_prob_K+=(std::lgamma(IRM_Co_Clustering_Beta_a+n_full_full_i_j)+std::lgamma(IRM_Co_Clustering_Beta_b)-std::lgammma())-(std::lgamma()+std::lgamma()-std::lgammma())
 */
     already_prob_K *=
-        ((double)tmp_number_of_l_in_each_cluster[j_cluster_of_L] *
-         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
+        ((boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
                             IRM_Co_Clustering_Beta_b + bar_n_full_full_i_j)) /
          (boost::math::beta(IRM_Co_Clustering_Beta_a + n_notk_full_i_j,
                             IRM_Co_Clustering_Beta_b + bar_n_notk_full_i_j)));
-
   }
 
-  // already_prob_K = 1;
+  already_prob_K *= (double)tmp_number_of_k_in_each_cluster[i_cluster_of_K];
   ///テスト用
 
   return already_prob_K;
@@ -473,15 +469,12 @@ double IRM_Co_Clustering::new_cluster_prob_K() {
     }
 
     new_prob *=  //
-        (IRM_Co_Clustering_co_alpha *
-         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_k_full_i_j,
+        ((boost::math::beta(IRM_Co_Clustering_Beta_a + n_k_full_i_j,
                             IRM_Co_Clustering_Beta_b + bar_n_k_full_i_j)) /
          (boost::math::beta(IRM_Co_Clustering_Beta_a,
                             IRM_Co_Clustering_Beta_b)));
   }
-
-  // new_prob *= IRM_Co_Clustering_co_alpha;
-  //テスト用
+  new_prob *= IRM_Co_Clustering_co_alpha;  // alphaは外
   return new_prob;
 }
 
@@ -578,8 +571,7 @@ int IRM_Co_Clustering::
   }
   probability_ratio.push_back(
       new_cluster_prob_L());  //新しいクラスタを選択する確率
-
-  /*
+/*
   for (const auto &i : probability_ratio) {
     std::cout << "Lの各確率は:" << i << std::endl;
   }
@@ -589,7 +581,7 @@ int IRM_Co_Clustering::
   std::discrete_distribution<std::size_t> cluster_dis_l(
       probability_ratio.begin(), probability_ratio.end());
   chosed = cluster_dis_l(engine);
-  // std::cout << "chosed" << chosed << std::endl;
+//  std::cout << "chosed" << chosed << std::endl;
   return chosed + 1;  //返す値は0スタートだけど机は1スタートなので
 
   //  return cluster_dis(engine) + 1;
@@ -666,13 +658,12 @@ double IRM_Co_Clustering::already_cluster_prob_L(
       }
     }
     already_prob_L *=
-        ((double)tmp_number_of_k_in_each_cluster[i_cluster_of_K] *
-         (boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
+        ((boost::math::beta(IRM_Co_Clustering_Beta_a + n_full_full_i_j,
                             IRM_Co_Clustering_Beta_b + bar_n_full_full_i_j)) /
          (boost::math::beta(IRM_Co_Clustering_Beta_a + n_notl_full_i_j,
                             IRM_Co_Clustering_Beta_b + bar_n_notl_full_i_j)));
   }
-
+  already_prob_L *= (double)tmp_number_of_l_in_each_cluster[j_cluster_of_L];
   return already_prob_L;
 }
 
@@ -699,14 +690,13 @@ double IRM_Co_Clustering::new_cluster_prob_L() {
     }
 
     new_prob *=  //
-        IRM_Co_Clustering_co_alpha *
         ((boost::math::beta(IRM_Co_Clustering_Beta_a + n_l_full_i_j,
                             IRM_Co_Clustering_Beta_b + bar_n_l_full_i_j)) /
          (boost::math::beta(IRM_Co_Clustering_Beta_a,
                             IRM_Co_Clustering_Beta_b)));
   }
 
-  // new_prob *= IRM_Co_Clustering_co_alpha;  //テスト用
+  new_prob *= IRM_Co_Clustering_co_alpha;  //テスト用
 
   return new_prob;
 }
@@ -857,6 +847,48 @@ double IRM_Co_Clustering::Logfactorial(
   return result;
 }
 
+void IRM_Co_Clustering::Get_Parameter_Matrix() {
+  Parameter_Relation_k.resize(number_of_l_in_each_cluster.size(), 0);
+  Parameter_Relation_k.shrink_to_fit();
+  Parameter_Relation_Matrix.resize(number_of_k_in_each_cluster.size(),
+                                   Parameter_Relation_k);
+  Parameter_Relation_Matrix.shrink_to_fit();
+
+  for (unsigned int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
+    for (unsigned int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
+      double n_full_full_i_j = 0;
+      double bar_n_full_full_i_j = 0;
+      for (unsigned int k = 0; k < Input_Binary_Relation_Matrix.size();
+           k++) {  //クラスタjについてカウント
+        for (unsigned int l = 0;
+             l < Input_Binary_Relation_Matrix[k].size();  // k行を調べる
+             l++) {
+          if (hidden_K[k] == i + 1) {
+            if (hidden_L[l] == j + 1) {
+              if (Input_Binary_Relation_Matrix[k][l] ==
+                  1) {  // Relation_Matrixの値が1かどうか
+                n_full_full_i_j += 1;
+              } else {
+                bar_n_full_full_i_j += 1;
+              }
+            }
+          }
+        }
+      }
+      Parameter_Relation_Matrix[i][j] =
+          (n_full_full_i_j) / (n_full_full_i_j + bar_n_full_full_i_j);
+    }
+  }
+
+  std::cout << "Parameter_Relation_Matrix" << std::endl;
+  for (unsigned int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
+    for (unsigned int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
+      std::cout << Parameter_Relation_Matrix[i][j] << "  ";
+    }
+    std::cout << std::endl;
+  }
+}
+
 void IRM_Co_Clustering::Output_by_record_csv() {
   FILE *fp;
   if ((fp = fopen("Input_Binary_Relation_Matrix.csv", "w")) != NULL) {
@@ -931,6 +963,23 @@ void IRM_Co_Clustering::Output_by_record_csv() {
     }
 
     fclose(ff);
+  } else {
+    std::cout << "File cannot Open" << std::endl;
+  }
+
+  FILE *fg;
+  if ((fg = fopen("Parameter_Relation_Matrix.csv", "w")) != NULL) {
+    for (unsigned int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
+      for (unsigned int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
+        //カンマで区切ることでCSVファイルとする
+        fprintf(fp, "%lf", Parameter_Relation_Matrix[i][j]);
+        if (j != Parameter_Relation_Matrix[i].size() - 1) {
+          fprintf(fg, ",");
+        }
+      }
+      fprintf(fg, "\n");
+    }
+    fclose(fg);
   } else {
     std::cout << "File cannot Open" << std::endl;
   }
