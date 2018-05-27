@@ -25,17 +25,10 @@ class CRP {
 
  public:
   CRP();
-
   void get_customer_seating_arrangement(
       std::vector<int> &Return_vector);  // IRM用
-
-  double CRP_repeat();    //遺伝研用
-  int get_desk_number();  //遺伝研用
-
   void set_both_alpha_CRP_customer_number(
       double a, int n);  //他のクラス(IRMなど)で使うパラメータ設定
-  void set_CRP_customer_number_alpha_1(int n);  //簡単なパラメータ設定
-  void get_CRP_parameter();
   void run_CRP();  // CRPの本体
   void CRP_first_customer();
   void CRP_update_seating_arrangement();
@@ -46,3 +39,11 @@ class CRP {
 };
 
 #endif
+/*
+  double CRP_repeat();    //遺伝研用
+  int get_desk_number();  //遺伝研用
+  void get_CRP_parameter();
+
+
+  void set_CRP_customer_number_alpha_1(int n);  //簡単なパラメータ設定
+*/

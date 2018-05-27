@@ -23,23 +23,6 @@ void CRP::get_customer_seating_arrangement(
   Return_vector = customer_seating_arrangement;
 }
 
-double CRP::CRP_repeat() {  // CRPを繰り返す関数，遺伝研用
-  double average_desk = 0;
-  int Repeat_number = 100;
-  for (auto j = 1; j < Repeat_number; j++) {
-    CRP::run_CRP();
-    CRP::show_customer_datas();
-    average_desk += (double)desk_seating_arrangement.size();
-  }
-  average_desk /= 100;
-  return average_desk;
-}
-
-int CRP::get_desk_number() {  //遺伝研用
-  int a;
-  a = desk_seating_arrangement.size();
-  return a;
-}
 
 void CRP::set_both_alpha_CRP_customer_number(
     double a, int n)  //他のクラス(IRMなど)で使うパラメータ設定
@@ -48,18 +31,6 @@ void CRP::set_both_alpha_CRP_customer_number(
   CRP_customer_number = n;
 }
 
-void CRP::set_CRP_customer_number_alpha_1(
-    int n) {  //簡単なパラメータ設定(遺伝研用)
-  CRP_alpha = 1;
-  CRP_customer_number = n;
-}
-
-void CRP::get_CRP_parameter() {  //手入力
-  std::cout << "CRPパラメータ a=";
-  std::cin >> CRP_alpha;
-  std::cout << "CRPの客の人数=";
-  std::cin >> CRP_customer_number;
-}
 
 void CRP::run_CRP() {  // CRPの本体
   CRP::CRP_first_customer();
@@ -140,3 +111,38 @@ void CRP::show_customer_datas() {
   std::cout << "total_desk_" << desk_seating_arrangement.size() << std::endl;
   std::cout << "座席配置の全要素表示終了" << std::endl;
 }
+
+
+/*
+double CRP::CRP_repeat() {  // CRPを繰り返す関数，遺伝研用
+  double average_desk = 0;
+  int Repeat_number = 100;
+  for (auto j = 1; j < Repeat_number; j++) {
+    CRP::run_CRP();
+    CRP::show_customer_datas();
+    average_desk += (double)desk_seating_arrangement.size();
+  }
+  average_desk /= 100;
+  return average_desk;
+}
+
+int CRP::get_desk_number() {  //遺伝研用
+  int a;
+  a = desk_seating_arrangement.size();
+  return a;
+}
+
+void CRP::get_CRP_parameter() {  //手入力
+  std::cout << "CRPパラメータ a=";
+  std::cin >> CRP_alpha;
+  std::cout << "CRPの客の人数=";
+  std::cin >> CRP_customer_number;
+}
+
+void CRP::set_CRP_customer_number_alpha_1(
+    int n) {  //簡単なパラメータ設定(遺伝研用)
+  CRP_alpha = 1;
+  CRP_customer_number = n;
+}
+
+*/
