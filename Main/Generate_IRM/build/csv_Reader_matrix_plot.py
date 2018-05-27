@@ -25,18 +25,19 @@ x = []
 for s in yoko:
     x.extend(s)
 Output_Binary_Relation_Matrix = pd.DataFrame(data=csv_int, index=tate,columns=x)
-print Output_Binary_Relation_Matrix
+
+#print Output_Binary_Relation_Matrix
 Output_sorted_by_index = Output_Binary_Relation_Matrix.sort_index()
-print Output_sorted_by_index
+#print Output_sorted_by_index
 
 Output_sorted_by_both = Output_sorted_by_index.sort_index(axis=1)
-print Output_sorted_by_both
+#print Output_sorted_by_both
 
 Output_Parameter_label = pd.DataFrame(data=csv_label_list, index=tate,columns=x)
-print Output_Parameter_label
+#print Output_Parameter_label
 Output_Parameter_label_sorted_by_index = Output_Parameter_label.sort_index()
 Output_Parameter_label_sorted_by_both = Output_Parameter_label_sorted_by_index.sort_index(axis=1)
-print Output_Parameter_label_sorted_by_both
+#print Output_Parameter_label_sorted_by_both
 
 plt.figure()
 sns.heatmap(Output_sorted_by_both, square=True,annot=False,cmap='Blues')
