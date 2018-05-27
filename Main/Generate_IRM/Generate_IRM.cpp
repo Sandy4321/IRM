@@ -183,27 +183,27 @@ double Generate_IRM::get_Posterior_Probability() {
   double S3_Posterior_Probability = 0;
 
   S1_Posterior_Probability =
-      number_of_k_in_each_cluster.size() * (std::log(Generate_IRM_co_alpha)) -
-      (Logfactorial(number_of_k_in_each_cluster.size()));
+      (double)number_of_k_in_each_cluster.size() * (std::log((double)Generate_IRM_co_alpha)) -
+      (Logfactorial((double)number_of_k_in_each_cluster.size()));
 
   for (unsigned int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
     S1_Posterior_Probability +=
-        Logfactorial(number_of_k_in_each_cluster[i] - 1);
+        Logfactorial((double)number_of_k_in_each_cluster[i] - 1);
   }
   for (unsigned int i = 0; i < hidden_K.size(); i++) {
-    S1_Posterior_Probability -= std::log(Generate_IRM_co_alpha + i);
+    S1_Posterior_Probability -= std::log((double)Generate_IRM_co_alpha + i);
   }
 
   S2_Posterior_Probability =
-      number_of_l_in_each_cluster.size() * (std::log(Generate_IRM_co_alpha)) -
-      (Logfactorial(number_of_l_in_each_cluster.size()));
+      (double)number_of_l_in_each_cluster.size() * (std::log((double)Generate_IRM_co_alpha)) -
+      (Logfactorial((double)number_of_l_in_each_cluster.size()));
 
   for (unsigned int i = 0; i < number_of_l_in_each_cluster.size(); i++) {
     S2_Posterior_Probability +=
-        Logfactorial(number_of_l_in_each_cluster[i] - 1);
+        Logfactorial((double)number_of_l_in_each_cluster[i] - 1);
   }
   for (unsigned int i = 0; i < hidden_L.size(); i++) {
-    S2_Posterior_Probability -= std::log(Generate_IRM_co_alpha + i);
+    S2_Posterior_Probability -= std::log((double)Generate_IRM_co_alpha + i);
   }
 
   /*
@@ -282,10 +282,10 @@ double Generate_IRM::get_Posterior_Probability() {
   return Posterior_Probability;
 }
 
-int Generate_IRM::Logfactorial(
-    int n) {  // boostの階乗は桁落ちしてしまうので実装しておく
-  int result = 0;
-  int k;
+double Generate_IRM::Logfactorial(
+    double n) {  // boostの階乗は桁落ちしてしまうので実装しておく
+  double result = 0;
+  double k;
 
   for (k = 1; k <= n; k++) {
     result += std::log(k);

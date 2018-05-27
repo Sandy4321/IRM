@@ -62,7 +62,7 @@ class Generate_IRM {
   void run_Generate_IRM();  // Generate_IRMの本体
   void Output_by_record_csv();
   double get_Posterior_Probability();
-  int Logfactorial(int n);
+  double Logfactorial(double n);
   void show_IRM_parameter();
   void show_datas();
 };

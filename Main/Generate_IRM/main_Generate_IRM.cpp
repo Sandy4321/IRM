@@ -16,12 +16,12 @@ int main(int argc, const char *argv[]) {
     return 0;
   }
 
-  double parameter_co_alpha = std::atoi(
+  double parameter_co_alpha = std::atof(
       argv[1]);  //二つのCRPに共通のパラメータalpha(共通でなくてもよし)
   double parameter_Beta_a = std::atof(argv[2]);
   double parameter_Beta_b = std::atof(argv[3]);
-  int K_number = std::atoi(argv[4]);  //比較対象Kの総数
-  int L_number = std::atoi(argv[5]);  // 比較対象Lの総数
+  double K_number = std::atof(argv[4]);  //比較対象Kの総数
+  double L_number = std::atof(argv[5]);  // 比較対象Lの総数
 
   std::vector<int> tmp_K;  //クラス間の(CRP→IRM)のvecのやり取りのため.気持ち悪い
   std::vector<int> tmp_L;
@@ -48,13 +48,13 @@ int main(int argc, const char *argv[]) {
   IRM.Set_Parameter_Relation_Matrix_Beta();
   IRM.decide_Output_Binary_Relation_Matrix();
 
-  // K_CRP.show_customer_datas();
-  // L_CRP.show_customer_datas();
+  K_CRP.show_customer_datas();
+  L_CRP.show_customer_datas();
 
   // std::cout << "Generated" << std::endl;
-  IRM.show_IRM_parameter();
-  IRM.show_datas();
- IRM.Output_by_record_csv();
+  //IRM.show_IRM_parameter();
+  //IRM.show_datas();
+  IRM.Output_by_record_csv();
   double Posterior_prob;
   Posterior_prob = IRM.get_Posterior_Probability();
   std::cout << "Posterior_prob=" << Posterior_prob << std::endl;
