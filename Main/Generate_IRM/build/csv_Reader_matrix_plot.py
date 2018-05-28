@@ -73,4 +73,4 @@ canvas.paste(b_png.resize((1600,1200)), (1600, 0))
 canvas.paste(c_png.resize((1600,1200)), (3200, 0))
 
 # 保存
-canvas.save('All_Output.png', 'PNG', quality=100, optimize=True)
+canvas.save('Simulation_All_Output.png', 'PNG', quality=100, optimize=True)
