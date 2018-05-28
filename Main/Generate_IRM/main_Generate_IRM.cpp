@@ -52,8 +52,8 @@ int main(int argc, const char *argv[]) {
   L_CRP.show_customer_datas();
 
   // std::cout << "Generated" << std::endl;
-  //IRM.show_IRM_parameter();
-  //IRM.show_datas();
+  // IRM.show_IRM_parameter();
+  // IRM.show_datas();
   IRM.Output_by_record_csv();
   double Posterior_prob;
   Posterior_prob = IRM.get_Posterior_Probability();

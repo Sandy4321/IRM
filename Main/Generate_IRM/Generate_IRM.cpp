@@ -183,7 +183,8 @@ double Generate_IRM::get_Posterior_Probability() {
   double S3_Posterior_Probability = 0;
 
   S1_Posterior_Probability =
-      (double)number_of_k_in_each_cluster.size() * (std::log((double)Generate_IRM_co_alpha)) -
+      (double)number_of_k_in_each_cluster.size() *
+          (std::log((double)Generate_IRM_co_alpha)) -
       (Logfactorial((double)number_of_k_in_each_cluster.size()));
 
   for (unsigned int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
@@ -195,7 +196,8 @@ double Generate_IRM::get_Posterior_Probability() {
   }
 
   S2_Posterior_Probability =
-      (double)number_of_l_in_each_cluster.size() * (std::log((double)Generate_IRM_co_alpha)) -
+      (double)number_of_l_in_each_cluster.size() *
+          (std::log((double)Generate_IRM_co_alpha)) -
       (Logfactorial((double)number_of_l_in_each_cluster.size()));
 
   for (unsigned int i = 0; i < number_of_l_in_each_cluster.size(); i++) {
