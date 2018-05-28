@@ -70,15 +70,15 @@ int main(int argc, const char *argv[]) {
 
   int decide_number;
   for (unsigned int i = 0; i < gibbs_counter; i++) {
-    std::cout << i + 1 << "回" << std::endl;
-    //IRM.update_hidden_K();
+    // std::cout << i + 1 << "回" << std::endl;
+    IRM.update_hidden_K();
     IRM.update_hidden_L();
     decide_number = IRM.decide_update_tmp_or_not_hidden_KL();
     if (decide_number != 1) {
       break;
       std::cout << i + 1 << "回目に打ち切り" << std::endl;
     }
-    if ((i % 1000) == 0) {
+    if ((i % 10) == 0) {
       std::cout << i << "回目突破" << std::endl;
     }
   }
