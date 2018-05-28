@@ -57,36 +57,36 @@ int main(int argc, const char *argv[]) {
   L_CRP.run_CRP();
   K_CRP.get_customer_seating_arrangement(tmp_K);
   L_CRP.get_customer_seating_arrangement(tmp_L);
-  //K_CRP.show_CRP_parameter();
-  //K_CRP.show_customer_datas();
-  //L_CRP.show_CRP_parameter();
-  //L_CRP.show_customer_datas();
+  // K_CRP.show_CRP_parameter();
+  K_CRP.show_customer_datas();
+  // L_CRP.show_CRP_parameter();
+  L_CRP.show_customer_datas();
 
-  
-    IRM.first_set_hidden_K_L(tmp_K, tmp_L);
-    IRM.first_get_each_cluster_number();  //ここまでがCRPによる初期化
-    IRM.set_stop_counter(stop_counter);
-    IRM.show_datas();
+  IRM.first_set_hidden_K_L(tmp_K, tmp_L);
+  IRM.first_get_each_cluster_number();  //ここまでがCRPによる初期化
+  IRM.set_stop_counter(stop_counter);
+  // IRM.show_datas();
+  // IRM.show_IRM_parameter();
 
-    int decide_number;
-    for (unsigned int i = 0; i < gibbs_counter; i++) {
-      std::cout << i + 1 << "回" << std::endl;
-      IRM.update_hidden_K();
-      IRM.update_hidden_L();
-      decide_number = IRM.decide_update_tmp_or_not_hidden_KL();
-      if (decide_number != 1) {
-        break;
-        std::cout << i + 1 << "回目に打ち切り" << std::endl;
-      }
-      if ((i % 1000) == 0) {
-        std::cout << i << "回目突破" << std::endl;
-      }
+  int decide_number;
+  for (unsigned int i = 0; i < gibbs_counter; i++) {
+    std::cout << i + 1 << "回" << std::endl;
+    //IRM.update_hidden_K();
+    IRM.update_hidden_L();
+    decide_number = IRM.decide_update_tmp_or_not_hidden_KL();
+    if (decide_number != 1) {
+      break;
+      std::cout << i + 1 << "回目に打ち切り" << std::endl;
     }
-    IRM.show_IRM_parameter();
-    IRM.show_datas();
-    IRM.Get_Parameter_Matrix();
-    IRM.Output_by_record_csv();
+    if ((i % 1000) == 0) {
+      std::cout << i << "回目突破" << std::endl;
+    }
+  }
+  IRM.show_IRM_parameter();
+  IRM.show_datas();
+  IRM.Get_Parameter_Matrix();
+  IRM.Output_by_record_csv();
 
-    std::cout << "Hello\n" << std::endl;
+  std::cout << "Hello\n" << std::endl;
   return 0;
 }

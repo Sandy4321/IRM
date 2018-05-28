@@ -96,7 +96,7 @@ class IRM_Co_Clustering {
 
   int decide_update_tmp_or_not_hidden_KL();
   double get_tmp_Posterior_Probability();
-  double Logfactorial(int n);
+  double Logfactorial(double n);
 
   void Get_Parameter_Matrix();
   void Output_by_record_csv();
