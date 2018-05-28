@@ -20,7 +20,7 @@ int main(int argc, const char *argv[]) {
   int Repeat_number = 1000;  //暫定で決定
   for (auto j = 0; j < Repeat_number; j++) {
     CRP C;
-    C.set_CRP_customer_number_alpha_1(customer_number); 
+    C.set_CRP_customer_number_alpha_1(customer_number);
     C.run_CRP();
     C.show_customer_datas();
     average_desk += (double)C.get_desk_number();
