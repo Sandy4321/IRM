@@ -826,6 +826,54 @@ new_prob *=
   return new_prob;
 }
 
+void IRM_Co_Clustering::update_alpha() {
+  double alpha = IRM_Co_Clustering_co_alpha;  //初期値
+
+  double c_1 = 1;  // alphaのハイパーパラメータ
+  double c_2 = 1;  // alphaのハイパーパラメータ
+  double Auxiliary_Pi_K=0;
+  double Auxiliary_S_K=0;
+
+  double Beta_a = alpha + 1;
+  double Beta_b = (double)(hidden_K.size());
+
+  std::random_device Par_seed_gen;
+  std::mt19937 engine(Par_seed_gen());
+  // Auxiliary_Pi_Kの更新
+  std::gamma_distribution<double> g_dis_a(Beta_a, 1.0 / 1.0);
+  std::gamma_distribution<double> g_dis_b(Beta_b, 1.0 / 1.0);
+  double Parameter = 0;
+  double average = 0;
+  double J_1 = 1000;  //サンプル回数
+  for (int j = 1; j < J_1; j++) {
+    double ga = g_dis_a(engine);
+    double gb = g_dis_b(engine);
+    Parameter = ga / (ga + gb);
+    average += Parameter;
+  }
+  Auxiliary_Pi_K = average / J_1;
+
+  // Auxiliary_S_Kの更新
+  double theta = 0;
+  double J_2 = 1000;  //サンプル回数
+  theta = (((double)hidden_K.size()) / alpha) /
+          (1 + ((double)hidden_K.size()) / alpha);
+  std::bernoulli_distribution dist_ber(theta);
+  for (unsigned int j = 1; j < J_2; j++) {
+    Auxiliary_S_K += dist_ber(engine);
+  }
+  Auxiliary_S_K /= J_2;
+
+  // alphaの更新
+  std::gamma_distribution<double> g_dis_alpha(
+      c_1 + number_of_k_in_each_cluster.size(), c_2 - std::log(Auxiliary_Pi_K));
+  double J_3 = 1000;  //サンプル回数
+  for (unsigned int j = 1; j < J_3; j++) {
+    alpha += g_dis_alpha(engine);
+  }
+  alpha /= J_3;
+}
+
 //完成したtmp_K_hiddenとtmp_hidden_Lを用いて事後確率計算
 // tmp_hidden_Kにhidden_Kをアップデートするか判定して更新かそのままにする
 int IRM_Co_Clustering::decide_update_tmp_or_not_hidden_KL() {

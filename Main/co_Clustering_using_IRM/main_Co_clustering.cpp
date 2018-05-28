@@ -80,6 +80,8 @@ int main(int argc, const char *argv[]) {
     }
     if ((i % 10) == 0) {
       std::cout << i << "回目突破" << std::endl;
+      IRM.Get_Parameter_Matrix();
+      IRM.Output_by_record_csv();
     }
   }
   IRM.show_IRM_parameter();

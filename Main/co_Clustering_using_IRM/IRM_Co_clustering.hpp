@@ -87,7 +87,7 @@ class IRM_Co_Clustering {
   int get_new_cluster_for_K();
   double already_cluster_prob_K(unsigned int i);
   double log_Beta(double a, double b, double n_f_f_i_j, double bar_n_f_f_i_j,
-                    double n_notk, double bar_n_not_k);
+                  double n_notk, double bar_n_not_k);
   double new_cluster_prob_K();
 
   void tmp_hidden_L_get_each_cluster_number();
@@ -95,6 +95,8 @@ class IRM_Co_Clustering {
   int get_new_cluster_for_L();
   double already_cluster_prob_L(unsigned int i);
   double new_cluster_prob_L();
+
+  void update_alpha();
 
   int decide_update_tmp_or_not_hidden_KL();
   double get_tmp_Posterior_Probability();
