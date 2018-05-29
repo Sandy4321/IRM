@@ -40,37 +40,82 @@ Output_Parameter_label_sorted_by_both = Output_Parameter_label_sorted_by_index.s
 #print Output_Parameter_label_sorted_by_both
 
 plt.figure()
+sns.heatmap(csv_int, square=True,annot=False,cmap='Blues')
+plt.savefig('Raw_heatmap_output.png')
+#plt.show()
+plt.close('all')
+
+plt.figure()
+sns.heatmap(csv_label_list, square=True,annot=False,cmap='Blues')
+plt.savefig('Raw_heatmap_parameter_output.png')
+#plt.show()
+plt.close('all')
+
+plt.figure()
+sns.heatmap(csv_float, square=True,annot=True,fmt='.3g',cmap='Blues')
+plt.savefig('Raw_heatmap_parameter.png')
+#plt.show()
+plt.close('all')
+
+
+plt.figure()
 sns.heatmap(Output_sorted_by_both, square=True,annot=False,cmap='Blues')
-plt.savefig('heatmap_output.png')
+plt.savefig('Sort_heatmap_output.png')
 #plt.show()
 plt.close('all')
 
 
 plt.figure()
 sns.heatmap(Output_Parameter_label_sorted_by_both, square=True,annot=False,cmap='Blues')
-plt.savefig('heatmap_parameter_output.png')
+plt.savefig('Sort_heatmap_parameter_output.png')
 #plt.show()
 plt.close('all')
 
 plt.figure()
-sns.heatmap(csv_float, square=True,annot=True,fmt='.5g',cmap='Blues')
-plt.savefig('heatmap_parameter.png')
+sns.heatmap(csv_float, square=True,annot=True,fmt='.3g',cmap='Blues')
+plt.savefig('Sort_heatmap_parameter.png')
 #plt.show()
 plt.close('all')
 
 # 既存画像を読み込み
-a_png = Image.open('heatmap_output.png', 'r')
-b_png = Image.open('heatmap_parameter_output.png', 'r')
-c_png= Image.open('heatmap_parameter.png', 'r')
+a1_png = Image.open('Raw_heatmap_output.png', 'r')
+b1_png = Image.open('Raw_heatmap_parameter_output.png', 'r')
+c1_png= Image.open('Raw_heatmap_parameter.png', 'r')
+
+a2_png = Image.open('Sort_heatmap_output.png', 'r')
+b2_png = Image.open('Sort_heatmap_parameter_output.png', 'r')
+c2_png= Image.open('Sort_heatmap_parameter.png', 'r')
+
 
 
 # マージに利用する下地画像を作成する
-canvas = Image.new('RGB', (4800, 1200), (255, 255, 255))
+canvas = Image.new('RGB', (9600, 4800), (255, 255, 255))
 
 # pasteで、座標（0, 0）と（0, 100）に既存画像を乗せる。
-canvas.paste(a_png.resize((1600,1200)), (0, 0))
-canvas.paste(b_png.resize((1600,1200)), (1600, 0))
-canvas.paste(c_png.resize((1600,1200)), (3200, 0))
+canvas.paste(a1_png.resize((3200,2400)), (0, 0))
+canvas.paste(b1_png.resize((3200,2400)), (3200, 0))
+canvas.paste(c1_png.resize((3200,2400)), (6400, 0))
+
+canvas.paste(a2_png.resize((3200,2400)), (0, 2400))
+canvas.paste(b2_png.resize((3200,2400)), (3200, 2400))
+canvas.paste(c2_png.resize((3200,2400)), (6400, 2400))
 
 # 保存
 canvas.save('Simulation_All_Output.png', 'PNG', quality=100, optimize=True)
+
+# マージに利用する下地画像を作成する
+canvas = Image.new('RGB', (9600, 2400), (255, 255, 255))
+
+# pasteで、座標（0, 0）と（0, 100）に既存画像を乗せる。
+canvas.paste(a2_png.resize((3200,2400)), (0, 0))
+canvas.paste(b2_png.resize((3200,2400)), (3200, 0))
+canvas.paste(c2_png.resize((3200,2400)), (6400, 0))
+
+# 保存
+canvas.save('Simulation_Sort_All_Output.png')
+
+
+
+
+
+
