@@ -1081,15 +1081,16 @@ void IRM_Co_Clustering::Get_Parameter_Matrix() {
       Parameter_Relation_Matrix[i][j] = average / J;
     }
   }
-
-  std::cout << "Parameter_Relation_Matrix" << std::endl;
-  for (unsigned int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
-    for (unsigned int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
-      std::cout << Parameter_Relation_Matrix[i][j] << "  ";
+  /*
+    std::cout << "Parameter_Relation_Matrix" << std::endl;
+    for (unsigned int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
+      for (unsigned int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
+        std::cout << Parameter_Relation_Matrix[i][j] << "  ";
+      }
+      std::cout << std::endl;
     }
-    std::cout << std::endl;
-  }
-  std::cout << "Parameter_Relation_MatrixEnd" << std::endl;
+    std::cout << "Parameter_Relation_MatrixEnd" << std::endl;
+    */
 }
 
 void IRM_Co_Clustering::Output_by_record_csv() {
@@ -1112,7 +1113,7 @@ void IRM_Co_Clustering::Output_by_record_csv() {
   }
 
   FILE *fc;
-  if ((fc = fopen("hidden_K.csv", "w")) != NULL) {
+  if ((fc = fopen("Estimate_hidden_K.csv", "w")) != NULL) {
     for (unsigned int i = 0; i < hidden_K.size(); i++) {
       fprintf(fc, "%d", hidden_K[i]);
       if (i != hidden_K.size() - 1) {
@@ -1125,7 +1126,7 @@ void IRM_Co_Clustering::Output_by_record_csv() {
     std::cout << "File cannot Open" << std::endl;
   }
   FILE *fd;
-  if ((fd = fopen("hidden_L.csv", "w")) != NULL) {
+  if ((fd = fopen("Estimate_hidden_L.csv", "w")) != NULL) {
     for (unsigned int j = 0; j < hidden_L.size(); j++) {
       fprintf(fd, "%d", hidden_L[j]);
       if (j != hidden_L.size() - 1) {
@@ -1139,7 +1140,7 @@ void IRM_Co_Clustering::Output_by_record_csv() {
   }
 
   FILE *fe;
-  if ((fe = fopen("number_of_k_l_in_each_cluster.csv", "w")) != NULL) {
+  if ((fe = fopen("Estimate_number_of_k_l_in_each_cluster.csv", "w")) != NULL) {
     for (unsigned int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
       fprintf(fe, "number_of_k_in_each_cluster=%d\n",
               number_of_k_in_each_cluster[i]);
@@ -1157,7 +1158,8 @@ void IRM_Co_Clustering::Output_by_record_csv() {
     std::cout << "File cannot Open" << std::endl;
   }
   FILE *ff;
-  if ((ff = fopen("Trantsition_Posterior_distriibution.csv", "w")) != NULL) {
+  if ((ff = fopen("Estimate_Trantsition_Posterior_distriibution.csv", "w")) !=
+      NULL) {
     for (unsigned int n = 0; n < Trantsition_Posterior_distriibution.size();
          n++) {
       fprintf(ff, "%lf", Trantsition_Posterior_distriibution[n]);
@@ -1172,7 +1174,7 @@ void IRM_Co_Clustering::Output_by_record_csv() {
   }
 
   FILE *fg;
-  if ((fg = fopen("Parameter_Relation_Matrix.csv", "w")) != NULL) {
+  if ((fg = fopen("Estimate_Parameter_Relation_Matrix.csv", "w")) != NULL) {
     for (unsigned int i = 0; i < Parameter_Relation_Matrix.size(); i++) {
       for (unsigned int j = 0; j < Parameter_Relation_Matrix[i].size(); j++) {
         //カンマで区切ることでCSVファイルとする
@@ -1188,7 +1190,8 @@ void IRM_Co_Clustering::Output_by_record_csv() {
     std::cout << "File cannot Open" << std::endl;
   }
   FILE *fh;
-  if ((fh = fopen("Output_size_Parameter_Relation_Matrix.csv", "w")) != NULL) {
+  if ((fh = fopen("Estimate_Output_size_Parameter_Relation_Matrix.csv", "w")) !=
+      NULL) {
     for (unsigned int k = 0; k < Input_Binary_Relation_Matrix.size(); k++) {
       for (unsigned int l = 0; l < Input_Binary_Relation_Matrix[k].size();
            l++) {
@@ -1207,8 +1210,10 @@ void IRM_Co_Clustering::Output_by_record_csv() {
   }
   FILE *fi;
   FILE *fj;
-  if ((fi = fopen("Each_cluster_number_label_Matrix.csv", "w")) != NULL) {
-    if ((fj = fopen("Each_cluster_1_number_label_Matrix.csv", "w")) != NULL) {
+  if ((fi = fopen("Estimate_Each_cluster_number_label_Matrix.csv", "w")) !=
+      NULL) {
+    if ((fj = fopen("Estimate_Each_cluster_1_number_label_Matrix.csv", "w")) !=
+        NULL) {
       for (unsigned int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
         for (unsigned int j = 0; j < number_of_l_in_each_cluster.size(); j++) {
           int n_full_full_i_j = 0;
@@ -1293,6 +1298,8 @@ void IRM_Co_Clustering::show_datas() {
 
   // std::cout << "total_desk_" << std::endl;
   std::cout << "Vector系の全要素表示終了" << std::endl;
+ std::cout << "Max_Posterior_Probability="<<Max_Posterior_Probability<< std::endl;
+
   /*
    std::cout << "Parameter_Relation_Matrix1" << std::endl;
    for (unsigned int i = 0; i < Parameter_Relation_Matrix.size(); i++) {

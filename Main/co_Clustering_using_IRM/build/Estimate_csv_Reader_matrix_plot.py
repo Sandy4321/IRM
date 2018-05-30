@@ -18,14 +18,14 @@ csv_label_list=np.array(csv_label)
 csv_number_label=[list(map(float,line.rstrip().split(","))) for line in open('Estimate_Each_cluster_number_label_Matrix.csv').readlines()]
 csv_number_label_list=np.array(csv_number_label)
 #print csv_number_label
-print csv_number_label_list
+#print csv_number_label_list
 
 tate =[list(map(int,line.rstrip().split(","))) for line in open('Estimate_hidden_K.csv').readlines()] 
 yoko=[list(map(int,line.rstrip().split(","))) for line in open('Estimate_hidden_L.csv').readlines()]
 
 csv_float=[list(map(float,line.rstrip().split(","))) for line in open('Estimate_Parameter_Relation_Matrix.csv').readlines()]
 csv_float_list=np.array(csv_float)
-print csv_float_list
+#print csv_float_list
 
 x = []
 for s in yoko:
@@ -44,6 +44,14 @@ Output_Parameter_label = pd.DataFrame(data=csv_label_list, index=tate,columns=x)
 Output_Parameter_label_sorted_by_index = Output_Parameter_label.sort_index()
 Output_Parameter_label_sorted_by_both = Output_Parameter_label_sorted_by_index.sort_index(axis=1)
 #print Output_Parameter_label_sorted_by_both
+
+Posterior=[list(map(float,line.rstrip().split(","))) for line in open('Estimate_Trantsition_Posterior_distriibution.csv').readlines()]
+plt.figure()
+sns.tsplot(Posterior)
+plt.savefig('Posterior.png')
+plt.show()
+plt.close('all')
+
 
 plt.figure()
 sns.heatmap(csv_int, square=True,annot=False,cmap='Blues')

@@ -68,16 +68,18 @@ int main(int argc, const char *argv[]) {
   // IRM.show_datas();
   // IRM.show_IRM_parameter();
 
-  int decide_number;
+  int decide_number=0;
+  int End_number=0;
   for (unsigned int i = 0; i < gibbs_counter; i++) {
     // std::cout << i + 1 << "回" << std::endl;
     IRM.update_hidden_K();
     IRM.update_hidden_L();
     decide_number = IRM.decide_update_tmp_or_not_hidden_KL();
     if (decide_number != 1) {
+// std::cout << i + 1 << "回目に打ち切り" << std::endl;
       break;
-      std::cout << i + 1 << "回目に打ち切り" << std::endl;
-    }
+         }
+	End_number+=1;
     if ((i % 10) == 0) {
       std::cout << i << "回目突破" << std::endl;
       IRM.Get_Parameter_Matrix();
@@ -88,7 +90,6 @@ int main(int argc, const char *argv[]) {
   IRM.show_datas();
   IRM.Get_Parameter_Matrix();
   IRM.Output_by_record_csv();
-
-  std::cout << "Hello\n" << std::endl;
+ std::cout << End_number+1 << "回目に終了" << std::endl;
   return 0;
 }
