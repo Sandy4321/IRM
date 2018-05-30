@@ -15,11 +15,17 @@ csv_int=[list(map(int,line.rstrip().split(","))) for line in open('Output_Binary
 csv_label=[list(map(float,line.rstrip().split(","))) for line in open('Output_size_Parameter_Relation_Matrix.csv').readlines()]
 csv_label_list=np.array(csv_label)
 
+csv_number_label=[list(map(float,line.rstrip().split(","))) for line in open('Each_cluster_number_label_Matrix.csv').readlines()]
+csv_number_label_list=np.array(csv_number_label)
+#print csv_number_label
+#print csv_number_label_list
+
 tate =[list(map(int,line.rstrip().split(","))) for line in open('hidden_K.csv').readlines()] 
 yoko=[list(map(int,line.rstrip().split(","))) for line in open('hidden_L.csv').readlines()]
 
 csv_float=[list(map(float,line.rstrip().split(","))) for line in open('Parameter_Relation_Matrix.csv').readlines()]
-
+csv_float_list=np.array(csv_float)
+#print csv_float_list
 
 x = []
 for s in yoko:
@@ -52,8 +58,8 @@ plt.savefig('Raw_heatmap_parameter_output.png')
 plt.close('all')
 
 plt.figure()
-sns.heatmap(csv_float, square=True,annot=True,fmt='.3g',cmap='Blues')
-plt.savefig('Raw_heatmap_parameter.png')
+sns.heatmap(csv_float_list, square=True,annot=csv_number_label_list,fmt='.6g',cmap='Blues')
+plt.savefig('Raw_heatmap_number.png')
 #plt.show()
 plt.close('all')
 
@@ -80,7 +86,7 @@ plt.close('all')
 # 既存画像を読み込み
 a1_png = Image.open('Raw_heatmap_output.png', 'r')
 b1_png = Image.open('Raw_heatmap_parameter_output.png', 'r')
-c1_png= Image.open('Raw_heatmap_parameter.png', 'r')
+c1_png= Image.open('Raw_heatmap_number.png', 'r')
 
 a2_png = Image.open('Sort_heatmap_output.png', 'r')
 b2_png = Image.open('Sort_heatmap_parameter_output.png', 'r')
