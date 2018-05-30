@@ -831,8 +831,8 @@ void IRM_Co_Clustering::update_alpha() {
 
   double c_1 = 1;  // alphaのハイパーパラメータ
   double c_2 = 1;  // alphaのハイパーパラメータ
-  double Auxiliary_Pi_K=0;
-  double Auxiliary_S_K=0;
+  double Auxiliary_Pi_K = 0;
+  double Auxiliary_S_K = 0;
 
   double Beta_a = alpha + 1;
   double Beta_b = (double)(hidden_K.size());
@@ -891,11 +891,11 @@ int IRM_Co_Clustering::decide_update_tmp_or_not_hidden_KL() {
     std::copy(tmp_hidden_K.begin(), tmp_hidden_K.end(), hidden_K.begin());
     std::copy(tmp_hidden_L.begin(), tmp_hidden_L.end(), hidden_L.begin());
     // std::copy(tmp_number_of_k_in_each_cluster.begin(),
-    //        tmp_number_of_k_in_each_cluster.end(),
-    //      number_of_k_in_each_cluster.begin());
+    //         tmp_number_of_k_in_each_cluster.end(),
+    //       number_of_k_in_each_cluster.begin());
     // std::copy(tmp_number_of_l_in_each_cluster.begin(),
-    //    tmp_number_of_l_in_each_cluster.end(),
-    //  number_of_l_in_each_cluster.begin());
+    //        tmp_number_of_l_in_each_cluster.end(),
+    //      number_of_l_in_each_cluster.begin());
 
     first_get_each_cluster_number();
     // //クラスタ関連の数を初期化して更新*****要check
@@ -1029,11 +1029,11 @@ double IRM_Co_Clustering::Logfactorial(
 }
 
 void IRM_Co_Clustering::Get_Parameter_Matrix() {
-  Parameter_Relation_k.resize(number_of_l_in_each_cluster.size(), 0);
-  Parameter_Relation_k.shrink_to_fit();
-  Parameter_Relation_Matrix.resize(number_of_k_in_each_cluster.size(),
-                                   Parameter_Relation_k);
+  std::vector<double> i_row_vector(number_of_l_in_each_cluster.size(), 0);
+  Parameter_Relation_Matrix.clear();
   Parameter_Relation_Matrix.shrink_to_fit();
+  Parameter_Relation_Matrix.resize(number_of_k_in_each_cluster.size(),
+                                   i_row_vector);
 
   for (unsigned int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
     for (unsigned int j = 0; j < number_of_l_in_each_cluster.size(); j++) {
@@ -1150,6 +1150,7 @@ void IRM_Co_Clustering::Output_by_record_csv() {
               number_of_l_in_each_cluster[i]);
     }
     fprintf(fe, "number_of_cluster_L==%d\n", number_of_cluster_L);
+    fprintf(fe, "Max_Posterior_Probability==%lf\n", Max_Posterior_Probability);
 
     fclose(fe);
   } else {
@@ -1201,6 +1202,54 @@ void IRM_Co_Clustering::Output_by_record_csv() {
       fprintf(fh, "\n");
     }
     fclose(fh);
+  } else {
+    std::cout << "File cannot Open" << std::endl;
+  }
+  FILE *fi;
+  FILE *fj;
+  if ((fi = fopen("Each_cluster_number_label_Matrix.csv", "w")) != NULL) {
+    if ((fj = fopen("Each_cluster_1_number_label_Matrix.csv", "w")) != NULL) {
+      for (unsigned int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
+        for (unsigned int j = 0; j < number_of_l_in_each_cluster.size(); j++) {
+          int n_full_full_i_j = 0;
+          int bar_n_full_full_i_j = 0;
+          for (unsigned int k = 0; k < Input_Binary_Relation_Matrix.size();
+               k++) {  //クラスタjについてカウント
+            for (unsigned int l = 0;
+                 l < Input_Binary_Relation_Matrix[k].size();  // k行を調べる
+                 l++) {
+              if (hidden_K[k] == i + 1) {
+                if (hidden_L[l] == j + 1) {
+                  if (Input_Binary_Relation_Matrix[k][l] ==
+                      1) {  // Relation_Matrixの値が1かどうか
+                    n_full_full_i_j += 1;
+                  } else {
+                    bar_n_full_full_i_j += 1;
+                  }
+                }
+              }
+            }
+          }
+
+          fprintf(fi, "%d", n_full_full_i_j + bar_n_full_full_i_j);
+          fprintf(fj, "%d", n_full_full_i_j);
+
+          if (j != number_of_l_in_each_cluster.size() - 1) {
+            fprintf(fi, ",");
+          }
+          if (j != number_of_l_in_each_cluster.size() - 1) {
+            fprintf(fj, ",");
+          }
+        }
+        fprintf(fi, "\n");
+        fprintf(fj, "\n");
+      }
+      fclose(fi);
+      fclose(fj);
+    } else {
+      std::cout << "File cannot Open" << std::endl;
+    }
+
   } else {
     std::cout << "File cannot Open" << std::endl;
   }
@@ -1256,8 +1305,8 @@ void IRM_Co_Clustering::show_datas() {
   /*
     std::cout << "Input_Binary_Relation_Matrix" << std::endl;
     for (unsigned int i = 0; i < Input_Binary_Relation_Matrix.size(); i++) {
-      for (unsigned int j = 0; j < Input_Binary_Relation_Matrix[i].size(); j++)
-    { std::cout << Input_Binary_Relation_Matrix[i][j] << "  ";
+      for (unsigned int j = 0; j < Input_Binary_Relation_Matrix[i].size();
+    j++) { std::cout << Input_Binary_Relation_Matrix[i][j] << "  ";
       }
       std::cout << std::endl;
     }
