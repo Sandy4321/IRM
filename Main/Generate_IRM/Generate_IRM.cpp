@@ -369,7 +369,6 @@ void Generate_IRM::Output_by_record_csv() {
               number_of_l_in_each_cluster[i]);
     }
     fprintf(fe, "number_of_cluster_L==%d\n", number_of_cluster_L);
-
     fclose(fe);
   } else {
     std::cout << "File cannot Open" << std::endl;
@@ -405,6 +404,57 @@ void Generate_IRM::Output_by_record_csv() {
       fprintf(fg, "\n");
     }
     fclose(fg);
+  } else {
+    std::cout << "File cannot Open" << std::endl;
+  }
+  FILE *fh;
+  FILE *fi;
+  if ((fh = fopen("Each_cluster_number_label_Matrix.csv", "w")) != NULL) {
+  if ((fi = fopen("Each_cluster_1_number_label_Matrix.csv", "w")) != NULL) {
+
+    for (unsigned int i = 0; i < number_of_k_in_each_cluster.size(); i++) {
+      for (unsigned int j = 0; j < number_of_l_in_each_cluster.size(); j++) {
+        int n_full_full_i_j = 0;
+        int bar_n_full_full_i_j = 0;
+        for (unsigned int k = 0; k < Output_Binary_Relation_Matrix.size();
+             k++) {  //クラスタjについてカウント
+          for (unsigned int l = 0;
+               l < Output_Binary_Relation_Matrix[k].size();  // k行を調べる
+               l++) {
+            if (hidden_K[k] == i + 1) {
+              if (hidden_L[l] == j + 1) {
+                if (Output_Binary_Relation_Matrix[k][l] ==
+                    1) {  // Relation_Matrixの値が1かどうか
+                  n_full_full_i_j += 1;
+                } else {
+                  bar_n_full_full_i_j += 1;
+                }
+              }
+            }
+          }
+        }
+
+        fprintf(fh, "%d", n_full_full_i_j+bar_n_full_full_i_j);
+        if (j != number_of_l_in_each_cluster.size() - 1) {
+          fprintf(fh, ",");
+        }
+       fprintf(fi, "%d", n_full_full_i_j);
+        if (j != number_of_l_in_each_cluster.size() - 1) {
+          fprintf(fi, ",");
+        }
+
+      }
+      fprintf(fh, "\n");
+ fprintf(fi, "\n");
+
+    }
+    fclose(fh);
+ fclose(fi);
+
+  }else {
+    std::cout << "File cannot Open" << std::endl;
+  }
+
   } else {
     std::cout << "File cannot Open" << std::endl;
   }
