@@ -31,6 +31,8 @@ class Generate_IRM {
   int number_of_cluster_K;  //比較対象Kの総クラスタ数
   int number_of_cluster_L;  //比較対象Lの総クラスタ数
 
+  double Posterior = 0;
+
   std::vector<unsigned int>
       hidden_K;  //比較対象Kの潜在系列(Kの要素の各所属クラスタ情報)
   std::vector<unsigned int>
