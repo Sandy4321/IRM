@@ -18,4 +18,3 @@ set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -g")
 add_executable(Co_clustering_using_IRM  main_Co_clustering.cpp IRM_Co_clustering.cpp  CRP.cpp)###要変更
 
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
-~
