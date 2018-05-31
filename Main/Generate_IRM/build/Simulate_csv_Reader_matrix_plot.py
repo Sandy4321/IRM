@@ -10,20 +10,20 @@ import csv
 from PIL import Image
 
 
-csv_int=[list(map(int,line.rstrip().split(","))) for line in open('Output_Binary_Relation_Matrix.csv').readlines()]
+csv_int=[list(map(int,line.rstrip().split(","))) for line in open('Simulate_Output_Binary_Relation_Matrix.csv').readlines()]
 
-csv_label=[list(map(float,line.rstrip().split(","))) for line in open('Output_size_Parameter_Relation_Matrix.csv').readlines()]
+csv_label=[list(map(float,line.rstrip().split(","))) for line in open('Simulate_Output_size_Parameter_Relation_Matrix.csv').readlines()]
 csv_label_list=np.array(csv_label)
 
-csv_number_label=[list(map(float,line.rstrip().split(","))) for line in open('Each_cluster_number_label_Matrix.csv').readlines()]
+csv_number_label=[list(map(float,line.rstrip().split(","))) for line in open('Simulate_Each_cluster_number_label_Matrix.csv').readlines()]
 csv_number_label_list=np.array(csv_number_label)
 #print csv_number_label
 #print csv_number_label_list
 
-tate =[list(map(int,line.rstrip().split(","))) for line in open('hidden_K.csv').readlines()] 
-yoko=[list(map(int,line.rstrip().split(","))) for line in open('hidden_L.csv').readlines()]
+tate =[list(map(int,line.rstrip().split(","))) for line in open('Simulate_hidden_K.csv').readlines()] 
+yoko=[list(map(int,line.rstrip().split(","))) for line in open('Simulate_hidden_L.csv').readlines()]
 
-csv_float=[list(map(float,line.rstrip().split(","))) for line in open('Parameter_Relation_Matrix.csv').readlines()]
+csv_float=[list(map(float,line.rstrip().split(","))) for line in open('Simulate_Parameter_Relation_Matrix.csv').readlines()]
 csv_float_list=np.array(csv_float)
 #print csv_float_list
 
